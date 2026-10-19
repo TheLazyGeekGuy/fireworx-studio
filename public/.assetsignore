@@ -1,0 +1,4 @@
+# Applied by wrangler at deploy time (not by vite): files matching these patterns stay in dist/
+# but are never uploaded as static assets.
+*.map
+.DS_Store

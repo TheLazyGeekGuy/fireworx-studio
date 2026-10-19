@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';
+import {createGuardedTransport}from '../src/editors/fireworx/engine/guarded-transport.js';
+import {requestExpanded}from '../src/editors/fireworx/engine/protocol.js';
+import {decodeDeviceBuffer,controlsForDevice,editedPayload}from '../src/editors/fireworx/engine/device-codec.js';
+import {parameterTransfers}from '../src/editors/fireworx/engine/parameter-transfer.js';
+import {frameWithPayload,writeBufferPart}from '../src/editors/fireworx/engine/live-protocol.js';
+const fixture=decodeDeviceBuffer(new Uint8Array(fs.readFileSync(new URL('generated/synthetic-p0.syx',import.meta.url))));
+let receive,closed=false,clock=0;const sent=[];
+const raw={subscribe(fn){receive=fn;return()=>receive=null;},send(b){sent.push(b);},close(){closed=true;}};
+const guard=createGuardedTransport(raw,{now:()=>clock});
+for(const config of [{settle:0},{settle:NaN},{deviceId:128},{now:null}])assert.throws(()=>createGuardedTransport(raw,config));
+const f=controlsForDevice(fixture,fixture.nodes.find(n=>n.algorithm==='delay-stereo')).find(f=>f.fieldName==='st_time');
+const wanted=editedPayload(fixture,new Map([[f.id,301]])),op=parameterTransfers(fixture,{...fixture,payload:wanted})[0];
+assert.throws(()=>guard.send(op.frame),/Deux lectures/);
+guard.send(requestExpanded(0));assert.throws(()=>guard.send(requestExpanded(0)),/déjà en cours/);receive(fixture.frame);
+assert.throws(()=>guard.send(op.frame),/Deux lectures/);guard.send(requestExpanded(0));receive(fixture.frame);
+assert.equal(guard.diagnostics.stableReads,2);
+for(const b of [fixture.frame,Uint8Array.of(176,1,2),Uint8Array.of(248),writeBufferPart(0,303,Uint8Array.of(1))])assert.throws(()=>guard.send(b));
+guard.send(op.frame);assert.throws(()=>guard.send(op.frame),/Relecture/);assert.throws(()=>guard.send(requestExpanded(0)),/Attendre/);
+clock=5000;guard.send(requestExpanded(0));receive(op.image.frame);assert.equal(guard.diagnostics.unverified,false);
+const beforeCount=sent.length;assert.throws(()=>guard.send(writeBufferPart(0,468,Uint8Array.of(2))),/largeur|refusée/);assert.equal(sent.length,beforeCount);
+const back=parameterTransfers(op.image,fixture)[0];guard.send(back.frame);clock=10000;guard.send(requestExpanded(0));
+const drift=fixture.payload.slice();drift[24]^=1;receive(frameWithPayload(fixture.frame,drift));assert(closed);assert.throws(()=>guard.send(requestExpanded(0)),/fermé/);
+console.log(JSON.stringify({status:'passed',physicalMidiUsed:false,stableInitialReads:2,onlyCompleteActiveScalars:true,fullAndStructureAndPerformanceWrites:0,unverifiedWriteLimit:1,earlyGetRefused:true,mismatchCloses:true}));
+
+// An old page's GET can finish after a reload. A late P0 restarts the quiet gap.
+let lateReceive;const quietSent=[];
+const quietGuard=createGuardedTransport({subscribe(fn){lateReceive=fn;return()=>{};},send(b){quietSent.push(b);},close(){}});
+const started=performance.now(),quietPromise=quietGuard.waitForQuiet();
+assert.throws(()=>quietGuard.send(requestExpanded(0)),/repos initial/);
+await new Promise(r=>setTimeout(r,100));lateReceive(fixture.frame);await quietPromise;
+assert(performance.now()-started>=3090);assert.equal(quietSent.length,0);
+const cancelled=quietGuard.waitForQuiet();quietGuard.close();await assert.rejects(cancelled,/fermé/);
+console.log(JSON.stringify({reloadQuietGap:'passed',lateReplyRestartsGap:true,closeCancelsWait:true,physicalMidiUsed:false,ownSends:0}));

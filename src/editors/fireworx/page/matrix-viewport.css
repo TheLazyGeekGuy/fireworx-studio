@@ -1,0 +1,23 @@
+/* Fit the routing canvas to the useful viewport, retaining true coordinates. */
+.flow.matrix-adaptive{--matrix-min-cell:84px;--matrix-gap:12px;--matrix-row-height:56px;--matrix-row-gap:8px;--matrix-pad:8px;gap:8px;align-items:flex-start}
+#routing{--matrix-height:calc(var(--matrix-height-rows,4) * (var(--matrix-row-height,56px) + var(--matrix-row-gap,8px)) - var(--matrix-row-gap,8px) + 2 * var(--matrix-pad,8px) + 2px)}
+.fw-root .flow.matrix-adaptive .routing-stage{min-width:calc(var(--matrix-view-columns,6) * var(--matrix-min-cell) + (var(--matrix-view-columns,6) - 1) * var(--matrix-gap) + 24px);flex:1 1 0%;align-self:flex-start;padding-inline:12px}
+.fw-root .flow.matrix-adaptive .grid{grid-template-columns:repeat(var(--matrix-view-columns,6),minmax(0,1fr));min-width:0;gap:var(--matrix-row-gap) var(--matrix-gap);padding-block:var(--matrix-pad)}
+.fw-root .flow.matrix-adaptive .cell{height:var(--matrix-row-height);min-width:0}
+.grid>.cell[hidden]{display:none!important}
+.flow.matrix-adaptive>span{align-self:center}
+.monobloc-mode #routing{--matrix-row-height:34px;--matrix-row-gap:6px;--matrix-pad:6px}
+.monobloc-mode .flow.matrix-adaptive{--matrix-min-cell:74px;--matrix-gap:10px;--matrix-row-height:34px;--matrix-row-gap:6px;--matrix-pad:6px;height:var(--matrix-height);max-height:var(--matrix-height);align-self:start}
+.fw-root.monobloc-mode .flow.matrix-adaptive{padding:0}
+/* Wide console: keep the matrix compact instead of stretching blank rows. */
+@media(min-width:1200px){
+ .fw-root[data-local-layout=console].monobloc-mode .working-area{grid-template-rows:30px 34px auto minmax(0,1fr)}
+ .fw-root[data-local-layout=console].monobloc-mode .dsp-budget{align-self:start}
+ .fw-root[data-local-layout=console].monobloc-mode #routing{--matrix-row-height:48px;--matrix-row-gap:8px;--matrix-pad:8px}
+ .fw-root[data-local-layout=console].monobloc-mode .flow.matrix-adaptive{--matrix-row-height:48px;--matrix-row-gap:8px;--matrix-pad:8px}
+}
+.screen-dialog .flow.matrix-adaptive{--matrix-row-height:54px;--matrix-row-gap:8px;--matrix-pad:8px;height:auto;max-height:60dvh;overflow:auto}
+@media(max-width:650px){
+ .flow.matrix-adaptive{--matrix-min-cell:70px;--matrix-gap:8px}
+ .monobloc-mode .flow.matrix-adaptive{--matrix-min-cell:70px;--matrix-gap:8px}
+}

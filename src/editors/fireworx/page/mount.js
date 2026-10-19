@@ -1,0 +1,46 @@
+import {create_dsp_preferences} from './dsp-preferences.js';
+import {create_dsp_banner} from './dsp-banner.js';
+import {create_settings_navigation} from './settings-navigation.js';
+import {create_modulation_gestures} from './modulation-gestures.js';
+import {create_randomizer_view} from './randomizer-view.js';
+import {create_rotary} from './rotary.js';
+import {create_screen} from './screen.js';
+import {create_library} from './library.js';
+import {create_monobloc} from './monobloc.js';
+import {create_preset_library_view} from './preset-library-view.js';
+import {create_modulation_feedback} from './modulation-feedback.js';
+import {create_device_session} from './device-session.js';
+import {create_tempo_tap_view} from './tempo-tap-view.js';
+import {create_performance_view} from './performance-view.js';
+import {create_modulation_view} from './modulation-view.js';
+import {create_dsp_view} from './dsp-view.js';
+import {create_hints} from './hints.js';
+import {create_device_view} from './device-view.js';
+import {create_port_links} from './port-links.js';
+import {create_appearance} from './appearance.js';
+import {create_app} from './app.js';
+// Static constructor wiring, one allocation per page; no runtime loader or global registry.
+export function mountPage(environment){
+const dsp_preferences=create_dsp_preferences(environment,{});
+const dsp_banner=create_dsp_banner(environment,{dsp_preferences});
+const settings_navigation=create_settings_navigation(environment,{});
+const modulation_gestures=create_modulation_gestures(environment,{});
+const randomizer_view=create_randomizer_view(environment,{dsp_preferences});
+const rotary=create_rotary(environment,{});
+const screen=create_screen(environment,{});
+const library=create_library(environment,{});
+const monobloc=create_monobloc(environment,{});
+const preset_library_view=create_preset_library_view(environment,{});
+const modulation_feedback=create_modulation_feedback(environment,{});
+const device_session=create_device_session(environment,{});
+const tempo_tap_view=create_tempo_tap_view(environment,{});
+const performance_view=create_performance_view(environment,{tempo_tap_view});
+const modulation_view=create_modulation_view(environment,{rotary});
+const dsp_view=create_dsp_view(environment,{dsp_preferences,dsp_banner});
+const hints=create_hints(environment,{});
+const device_view=create_device_view(environment,{dsp_preferences,modulation_feedback,settings_navigation,device_session,performance_view,rotary,modulation_view,dsp_view,hints});
+const port_links=create_port_links(environment,{});
+const appearance=create_appearance(environment,{});
+const app=create_app(environment,{dsp_preferences,dsp_banner,settings_navigation,modulation_gestures,randomizer_view,rotary,screen,library,monobloc,preset_library_view,device_view,port_links,appearance,hints});
+return app;
+}

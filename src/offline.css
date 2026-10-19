@@ -1,0 +1,1 @@
+.offline-status{display:inline-flex;align-items:center;gap:4px;color:var(--theme-muted,#aaa);flex-shrink:0}.offline-status[data-ready=true]{color:var(--theme-accent,#d99b41)}.offline-status small{font-size:10px;line-height:1}.offline-status svg{display:block;pointer-events:none}

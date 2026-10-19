@@ -1,0 +1,13 @@
+[
+  {
+    "id": "tc-electronic-fireworx-editor",
+    "module": {
+      "path": "../editors/fireworx/module",
+      "export": "fireworxModule"
+    },
+    "view": {
+      "path": "../editors/fireworx/registration",
+      "export": "fireworxView"
+    }
+  }
+]

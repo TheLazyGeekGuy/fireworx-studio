@@ -1,0 +1,39 @@
+{
+  "id": "bcl",
+  "version": 1,
+  "source": "https://mountainutilities.eu/system/files/download/BC-MIDI-Implementation-1.2.9.pdf",
+  "outputs": [
+    { "type": "PC", "fields": [
+      { "id": "bank-msb", "label": "Bank MSB", "index": 2, "scopes": ["encoder", "button", "fader"], "kind": "numbers", "min": 0, "max": 127, "off": true },
+      { "id": "bank-lsb", "label": "Bank LSB", "index": 3, "scopes": ["encoder", "button", "fader"], "kind": "numbers", "min": 0, "max": 127, "off": true },
+      { "id": "program", "label": "Program", "index": 4, "scopes": ["button"], "kind": "numbers", "min": 0, "max": 127, "off": true }
+    ] },
+    { "type": "GS/XG", "fields": [
+      { "id": "gs-parameter", "label": "GS/XG parameter", "index": 2, "scopes": ["encoder", "button", "fader"], "kind": "choice", "choices": ["cutoff", "resonance", "v-rate", "v-depth", "v-delay", "eg-attack", "eg-decay", "eg-release", "modulation", "p-time", "volume", "panorama", "rev-send", "crs-send", "dly-send"] }
+    ] }
+  ],
+  "fields": [
+    { "id": "default", "label": "Default value", "scopes": ["encoder", "button", "fader"], "kind": "numbers", "min": 0, "max": 16383, "off": true },
+    { "id": "resolution", "label": "Resolution R1–R4", "scopes": ["encoder"], "kind": "numbers", "min": 1, "max": 65535, "count": 4, "minCount": 1 },
+    { "id": "minmax", "label": "Value1 / Value2 override", "scopes": ["encoder", "button", "fader"], "kind": "numbers", "min": 0, "max": 16383, "count": 2 },
+    { "id": "local", "label": "Local", "scopes": ["encoder", "button"], "kind": "choice", "choices": ["off", "on"] },
+    { "id": "motor", "label": "Motor", "scopes": ["fader"], "kind": "choice", "choices": ["off", "on"], "requires": ["motor"] },
+    { "id": "override", "label": "Fader override", "scopes": ["fader"], "kind": "choice", "choices": ["move", "pickup"] },
+    { "id": "keyoverride", "label": "Motor override button", "scopes": ["fader"], "kind": "numbers", "min": 1, "max": 64, "off": true, "requires": ["motor"] },
+    { "id": "mode", "label": "Custom button mode", "scopes": ["button"], "kind": "text" },
+    { "id": "tx", "label": "Custom output · .tx", "scopes": ["encoder", "button", "fader", "preset"], "kind": "lines" },
+    { "id": "snapshot", "label": "Snapshot", "scopes": ["preset"], "kind": "choice", "choices": ["off", "on"] },
+    { "id": "request", "label": "Request / LEARN output", "scopes": ["preset"], "kind": "choice", "choices": ["off", "on"] },
+    { "id": "egroups", "label": "Encoder groups", "scopes": ["preset"], "kind": "choice", "choices": ["1", "2", "3", "4"] },
+    { "id": "fkeys", "label": "Function keys", "scopes": ["preset"], "kind": "choice", "choices": ["off", "on"] },
+    { "id": "lock", "label": "Preset lock", "scopes": ["preset"], "kind": "choice", "choices": ["off", "on"] },
+    { "id": "init", "label": "Initialize elements in exported preset", "scopes": ["preset"], "kind": "flag" },
+    { "id": "midimode", "label": "MIDI mode", "scopes": ["global"], "kind": "choice", "choices": ["U-1", "U-2", "U-3", "U-4", "S-1", "S-2", "S-3", "S-4"] },
+    { "id": "startup", "label": "Startup preset", "scopes": ["global"], "kind": "numbers", "min": 1, "max": 32, "extra": ["last"] },
+    { "id": "footsw", "label": "Footswitch polarity", "scopes": ["global"], "kind": "choice", "choices": ["norm", "inv", "auto"] },
+    { "id": "rxch", "label": "Receive channel", "scopes": ["global"], "kind": "numbers", "min": 1, "max": 16, "off": true },
+    { "id": "deviceid", "label": "Device ID", "scopes": ["global"], "kind": "numbers", "min": 1, "max": 16 },
+    { "id": "txinterval", "label": "Transmission interval (ms)", "scopes": ["global"], "kind": "choice", "choices": ["2", "5", "10", "20", "50", "100"] },
+    { "id": "deadtime", "label": "Dead time (ms)", "scopes": ["global"], "kind": "numbers", "min": 0, "max": 1000 }
+  ]
+}

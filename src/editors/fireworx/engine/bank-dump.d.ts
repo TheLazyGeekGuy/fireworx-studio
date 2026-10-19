@@ -1,0 +1,13 @@
+export const requestUserBank:any;
+export const classifyFrame:any;
+export const parseUserBankHeader:any;
+export const parseUserBankPacket:any;
+export const createUserBankAssembler:any;
+export const scanPackedRecords:any;
+export const userBankInventory:any;
+export const decodeUserBankFrames:any;
+export const proposePresetSplit:any;
+export const userBankOpcodes:any;
+export const packetDataBytes:any;
+export const packetLayouts:any;
+export const rolloverRule:any;

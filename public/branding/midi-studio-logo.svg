@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-labelledby="title">
+  <title id="title">MIDI Studio</title>
+  <g fill="none" stroke-width="13" stroke-linecap="butt">
+    <path d="M51.46 223.54L38.03 236.97" stroke="#dda044"/>
+    <path d="M36.33 204.34L20.13 214.27" stroke="#dda044"/>
+    <path d="M26.09 182.14L8.02 188.01" stroke="#dda044"/>
+    <path d="M21.32 158.16L2.38 159.65" stroke="#dda044"/>
+    <path d="M22.28 133.73L3.51 130.76" stroke="#dda044"/>
+    <path d="M28.92 110.20L11.36 102.93" stroke="#dda044"/>
+    <path d="M40.86 88.87L25.49 77.70" stroke="#dda044"/>
+    <path d="M57.46 70.92L45.12 56.47" stroke="#eeeef0"/>
+    <path d="M77.78 57.34L69.16 40.41" stroke="#eeeef0"/>
+    <path d="M100.72 48.87L96.29 30.40" stroke="#eeeef0"/>
+    <path d="M125.00 46.00L125.00 27.00" stroke="#eeeef0"/>
+    <path d="M149.28 48.87L153.71 30.40" stroke="#eeeef0"/>
+    <path d="M172.22 57.34L180.84 40.41" stroke="#eeeef0"/>
+    <path d="M192.54 70.92L204.88 56.47" stroke="#eeeef0"/>
+    <path d="M209.14 88.87L224.51 77.70" stroke="#eeeef0"/>
+    <path d="M221.08 110.20L238.64 102.93" stroke="#eeeef0"/>
+    <path d="M227.72 133.73L246.49 130.76" stroke="#eeeef0"/>
+    <path d="M228.68 158.16L247.62 159.65" stroke="#eeeef0"/>
+    <path d="M223.91 182.14L241.98 188.01" stroke="#eeeef0"/>
+    <path d="M213.67 204.34L229.87 214.27" stroke="#eeeef0"/>
+    <path d="M198.54 223.54L211.97 236.97" stroke="#eeeef0"/>
+  </g>
+  <circle cx="125" cy="150" r="85" fill="#202326" stroke="#eeeef0" stroke-width="4"/>
+  <path d="M91 183v-66l34 40 34-40v66" fill="none" stroke="#eeeef0" stroke-width="9" stroke-linejoin="round"/>
+  <text x="277" y="159" fill="#eeeef0" font-family="Arial,Helvetica,sans-serif" font-size="167" font-weight="800" letter-spacing="-8">MIDI</text>
+  <text x="420" y="254" fill="#dda044" font-family="SignPainter,Apple Chancery,Brush Script MT,cursive" font-size="112" font-style="italic">Studio</text>
+</svg>

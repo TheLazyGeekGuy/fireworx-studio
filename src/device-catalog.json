@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "models": {
+    "bcr32": { "protocol": "bcr32", "parameterSchema": null, "profileModel": "BCR-32", "manufacturer": [0, 32, 50], "deviceId": 127, "modelByte": 100, "portPattern": "BCR[- ]?32", "presetSlots": 64, "encoders": 32, "pushes": 32 },
+    "bcr2000": { "protocol": "bcl", "parameterSchema": "bcl", "profileModel": "BCR2000", "manufacturer": [0, 32, 50], "deviceId": 127, "modelByte": 21, "portPattern": "BCR[- ]?2000", "presetSlots": 32, "encoders": 56, "pushes": 32, "bclModel": "R" },
+    "bcf2000": { "protocol": "bcl", "parameterSchema": "bcl", "profileModel": "BCF2000", "manufacturer": [0, 32, 50], "deviceId": 127, "modelByte": 20, "portPattern": "BCF[- ]?2000", "presetSlots": 32, "encoders": 41, "pushes": 32, "bclModel": "F", "faders": { "first": 33, "count": 9, "physicalCount": 8 } }
+  }
+}

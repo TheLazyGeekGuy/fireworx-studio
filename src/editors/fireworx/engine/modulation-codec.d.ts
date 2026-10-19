@@ -1,0 +1,13 @@
+export const modulationDestinations:any;
+export const readModulation:any;
+export const linkLabels:any;
+export const createModulation:any;
+export const assignModulation:any;
+export const deleteModulation:any;
+export const clearModulations:any;
+export const transformModulation:any;
+export const modulationTransformControls:any;
+export const modulationSources:any;
+export const sourceKey:any;
+export const destinationKey:any;
+export const glideMilliseconds:any;

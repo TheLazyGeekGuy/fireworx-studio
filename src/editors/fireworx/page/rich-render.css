@@ -1,0 +1,129 @@
+/* FireworX rich render (#75). Optional layer above the flat theme, active only on
+   .fw-root[data-render=rich]. Original creation: no third-party or manufacturer artwork.
+   Tokens come from appearance.js / appearance-presets.js (richMaterial, familyAccents):
+   any color under text is one of --surface, --bg, --rich-raised, --rich-sunken,
+   --rich-well, --rich-selected or a verified gradient between two of them.
+   Translucent white/black is reserved to text-free parts (knobs, LEDs, shadows).
+   Cost rules: no filter or backdrop-filter on repeated elements, no animation, no blurred
+   shadow on a surface that is re-rendered while a knob turns (.algorithm-visual). */
+
+.fw-root[data-render=rich]{--rich-glow:color-mix(in srgb,var(--accent) 55%,transparent);--rich-ring-track:color-mix(in srgb,var(--line) 80%,transparent)}
+
+/* ---------- Knob: one component (.dial-face editors/live, .modern-dial encoders) ---------- */
+.fw-root[data-render=rich][data-local-theme] :is(.dial-face,.modern-dial){
+ border:1px solid color-mix(in srgb,var(--line) 55%,#000);
+ background:
+  radial-gradient(circle at 35% 25%,rgb(255 255 255/.34),rgb(255 255 255/0) 28%),
+  radial-gradient(circle closest-side,var(--rich-knob-hi) 0,color-mix(in srgb,var(--rich-knob-hi) 45%,var(--rich-knob-lo)) 55%,var(--rich-knob-lo) 68%,rgb(0 0 0/.45) 71%,transparent 74%),
+  repeating-conic-gradient(color-mix(in srgb,var(--rich-knob-hi) 60%,var(--rich-knob-lo)) 0deg 3deg,var(--rich-knob-lo) 3deg 8deg);
+ box-shadow:0 6px 10px -3px var(--rich-shadow),0 1px 2px var(--rich-shadow),inset 0 1px 0 rgb(255 255 255/.2),inset 0 -3px 5px rgb(0 0 0/.35)
+}
+.fw-root[data-render=rich][data-local-theme] :is(.dial-face,.modern-dial) i:before{
+ width:3px;height:12px;left:calc(50% - 1.5px);top:1px;border-radius:2px;background:var(--accent);
+ box-shadow:0 0 3px var(--accent),0 0 8px var(--rich-glow)
+}
+/* Value ring: 270° sweep read from the existing --dial-angle (no extra DOM, no JS). */
+.fw-root[data-render=rich][data-local-theme] .dial-face{--rich-ring-on:var(--accent);overflow:visible}
+.fw-root[data-render=rich][data-local-theme] .dial-face:before{
+ content:'';position:absolute;inset:-8px;border-radius:50%;pointer-events:none;
+ background:conic-gradient(from 225deg,var(--rich-ring-on) 0deg calc(var(--dial-angle,-135deg) + 135deg),var(--rich-ring-track) 0deg 270deg,transparent 0deg);
+ -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3.5px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 3.5px),#000 calc(100% - 3px))
+}
+.fw-root[data-render=rich][data-local-theme] .dial-face:is([data-turning],:focus-visible){--rich-ring-on:color-mix(in srgb,var(--accent) 72%,#fff)}
+.fw-root[data-render=rich][data-local-theme] .dial-face:focus-visible{outline-offset:11px}
+/* Measured (#75): turning a knob repaints only its pointer and ring layers, not the knob .fw-root,
+   the faceplate or the panel behind. ~10–40 small layers; no layer per card or button. */
+.fw-root[data-render=rich] :is(.dial-face,.modern-dial) i,.fw-root[data-render=rich] .dial-face:before{will-change:transform}
+.fw-root[data-render=rich] .dial-track{gap:12px;margin-top:16px}
+/* Endless encoders: static dotted ring, no value claim. */
+.fw-root[data-render=rich][data-local-theme] .modern-dial:before{
+ content:'';position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+ background:repeating-conic-gradient(from -2deg,color-mix(in srgb,var(--muted) 70%,transparent) 0deg 4deg,transparent 4deg 22.5deg);
+ -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px))
+}
+.fw-root[data-render=rich][data-local-theme] .modern-rotary[data-turning] .modern-dial:before{background:repeating-conic-gradient(from -2deg,var(--accent) 0deg 4deg,transparent 4deg 22.5deg)}
+.fw-root[data-render=rich] .modern-encoders{gap:16px}
+
+/* ---------- Buttons with relief ---------- */
+.fw-root[data-render=rich][data-local-theme] button:not(.panel-hit,.audio-port,.dial-face,.cell,.modern-rotary,.modern-display,.lcd-hit,.family-list button,.tabs button,.block-tabs button,.group-nav button,.hint-trigger):where(:not(#preset-library *)){
+ background-color:var(--surface);background-image:linear-gradient(180deg,var(--rich-raised),var(--surface) 55%,var(--rich-sunken));
+ border-radius:4px;box-shadow:inset 0 1px 0 var(--rich-highlight),0 1px 0 color-mix(in srgb,var(--line) 70%,transparent),0 2px 4px -1px var(--rich-shadow);transition:border-color .12s,box-shadow .12s,transform .06s
+}
+.fw-root[data-render=rich][data-local-theme] button:not(.panel-hit,.audio-port,.dial-face,.cell,.modern-rotary,.modern-display,.lcd-hit,.family-list button,.tabs button,.block-tabs button,.group-nav button,.hint-trigger):where(:not(#preset-library *)):not(:disabled):active{transform:translateY(1px);box-shadow:inset 0 1px 3px var(--rich-shadow)}
+.fw-root[data-render=rich][data-local-theme] :is(button[aria-pressed=true],button[aria-selected=true]):not(.panel-hit,.audio-port,.dial-face,.cell,.modern-rotary,.modern-display,.lcd-hit,.family-list button,.tabs button,.group-nav button,.hint-trigger):where(:not(#preset-library *)){
+ color:var(--accent);border-color:var(--accent);background-color:var(--rich-selected);background-image:linear-gradient(180deg,var(--rich-sunken),var(--rich-selected));
+ box-shadow:inset 0 2px 4px var(--rich-shadow),0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent),0 0 10px -3px var(--rich-glow)
+}
+.fw-root[data-render=rich][data-local-theme] .tabs button[aria-selected=true]{box-shadow:inset 0 -2px 0 var(--accent)}
+.fw-root[data-render=rich][data-local-theme] :is(input:not([type=range],[type=checkbox],[type=radio],[type=color]),select):where(:not(#preset-library *)){border-radius:4px;box-shadow:inset 0 1px 3px var(--rich-shadow)}
+
+/* ---------- Modern façade: brushed faceplate, glass display, keycaps with LEDs ---------- */
+.fw-root[data-render=rich][data-local-theme] .modern-front{
+ background-color:var(--surface);
+ background-image:repeating-linear-gradient(0deg,color-mix(in srgb,var(--rich-raised) 40%,transparent) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,color-mix(in srgb,var(--rich-raised) 30%,transparent) 0 1px,transparent 1px 7px),linear-gradient(180deg,var(--rich-raised),var(--surface) 40%,var(--rich-sunken));
+ border-radius:10px 10px 0 0;box-shadow:inset 0 1px 0 var(--rich-highlight),inset 0 -1px 0 color-mix(in srgb,var(--line) 60%,#000)
+}
+.fw-root[data-render=rich][data-local-theme] .rack .modern-display{
+ background-color:var(--rich-well);background-image:linear-gradient(172deg,var(--rich-raised) 0,var(--rich-well) 42%);border-radius:7px;border-color:color-mix(in srgb,var(--line) 70%,#000);
+ box-shadow:inset 0 2px 8px rgb(0 0 0/.45),inset 0 0 0 1px color-mix(in srgb,var(--line) 50%,transparent),0 1px 0 var(--rich-highlight)
+}
+.fw-root[data-render=rich][data-local-theme] .rack :is(.modern-effects,.modern-navigation) button{
+ background-color:var(--surface);background-image:linear-gradient(180deg,var(--rich-raised),var(--rich-sunken));border:1px solid var(--line);border-radius:5px;
+ box-shadow:inset 0 1px 0 var(--rich-highlight),0 2px 0 color-mix(in srgb,var(--line) 55%,#000),0 4px 7px -2px var(--rich-shadow)
+}
+.fw-root[data-render=rich][data-local-theme] .rack :is(.modern-effects,.modern-navigation) button:active{transform:translateY(2px);box-shadow:inset 0 1px 3px var(--rich-shadow),0 0 0 color-mix(in srgb,var(--line) 55%,#000)}
+.fw-root[data-render=rich][data-local-theme] .rack .modern-effects button[aria-pressed=true]{color:var(--accent);border-color:var(--accent);background-image:linear-gradient(180deg,var(--rich-selected),var(--rich-sunken))}
+.fw-root[data-render=rich][data-local-theme] .rack .modern-effects button:before{
+ width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:0;
+ background:radial-gradient(circle at 38% 32%,var(--rich-knob-hi),var(--rich-knob-lo));box-shadow:inset 0 1px 1px rgb(0 0 0/.55),0 1px 0 var(--rich-highlight)
+}
+/* Lit LED follows the existing data-enabled state (selected instance and not muted). */
+.fw-root[data-render=rich][data-local-theme] .rack .modern-effects button[data-enabled=true]:before{
+ background:radial-gradient(circle at 38% 32%,#fff 0 14%,var(--accent) 50%,color-mix(in srgb,var(--accent) 65%,#000) 100%);
+ box-shadow:0 0 4px 1px color-mix(in srgb,var(--accent) 80%,transparent),0 0 12px 3px color-mix(in srgb,var(--accent) 35%,transparent)
+}
+.fw-root[data-render=rich][data-local-theme] .rack .modern-effects button[data-enabled=true]{box-shadow:inset 0 -2px 0 var(--accent),0 0 12px -2px var(--rich-glow),0 2px 0 color-mix(in srgb,var(--line) 55%,#000)}
+.fw-root[data-render=rich] .rack .modern-rotary output{color:var(--accent)}
+
+/* ---------- Hardware façade: native SVG kept; only depth and the lit LED glow ---------- */
+.fw-root[data-render=rich] .rack-wrap{border-radius:8px;box-shadow:0 18px 32px -14px var(--rich-shadow),0 2px 4px var(--rich-shadow)}
+.fw-root[data-render=rich] #rack svg rect[fill="#d7ed8b"]{filter:drop-shadow(0 0 2px #d7ed8b) drop-shadow(0 0 5px #b8e35a)}
+
+/* ---------- Matrix: block cards with family accent and LED ---------- */
+.fw-root[data-render=rich][data-local-theme] .cell{border-radius:7px}
+.fw-root[data-render=rich][data-local-theme] .cell:is([data-node],[data-routing-node],.route-cell){
+ background-color:var(--surface);background-image:linear-gradient(165deg,var(--rich-raised),var(--surface) 48%,var(--rich-sunken));border-color:var(--line);
+ color:var(--rich-family,var(--accent));font-weight:600;
+ box-shadow:inset 3px 0 0 var(--rich-family,var(--accent)),inset 0 1px 0 var(--rich-highlight),0 3px 7px -2px var(--rich-shadow)
+}
+.fw-root[data-render=rich][data-local-theme] .cell:is([data-node],[data-routing-node],.route-cell) small{color:var(--text);font-weight:400}
+.fw-root[data-render=rich][data-local-theme] .cell[data-node]:before{
+ content:'';position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;
+ background:var(--rich-family,var(--accent));box-shadow:0 0 3px var(--rich-family,var(--accent)),0 0 8px color-mix(in srgb,var(--rich-family,var(--accent)) 45%,transparent)
+}
+.fw-root[data-render=rich][data-local-theme] .cell.muted[data-node]:before{background:radial-gradient(circle at 38% 32%,var(--rich-knob-hi),var(--rich-knob-lo));box-shadow:inset 0 1px 1px rgb(0 0 0/.5)}
+.fw-root[data-render=rich][data-local-theme] .cell.selected:is([data-node],[data-routing-node],.route-cell){
+ border-color:var(--accent);background-color:var(--rich-selected);background-image:linear-gradient(165deg,var(--rich-selected),var(--rich-sunken));
+ box-shadow:inset 3px 0 0 var(--rich-family,var(--accent)),0 0 0 1px var(--accent),0 0 16px -3px var(--rich-glow)
+}
+.fw-root[data-render=rich][data-local-theme] .cell.empty{background-color:var(--rich-well);background-image:none;box-shadow:inset 0 2px 5px var(--rich-shadow);color:var(--muted)}
+.fw-root[data-render=rich][data-local-theme] .cell.drop-ready{box-shadow:0 0 0 2px var(--accent),0 0 18px -2px var(--rich-glow)}
+/* One filter for the whole wire layer, repainted only when the routing changes. */
+.fw-root[data-render=rich] #wires{filter:drop-shadow(0 0 3px var(--rich-glow))}
+.fw-root[data-render=rich] .flow-wire{stroke-linecap:round}
+
+/* ---------- Panels and screens ---------- */
+.fw-root[data-render=rich][data-local-theme] #monobloc{border-radius:10px;box-shadow:0 24px 44px -24px var(--rich-shadow),inset 0 1px 0 var(--rich-highlight)}
+.fw-root[data-render=rich][data-local-theme] .mono-status{background-image:linear-gradient(180deg,var(--rich-raised),var(--surface))}
+.fw-root[data-render=rich][data-local-theme] .algorithm-visual{
+ background-color:var(--rich-well);background-image:linear-gradient(180deg,var(--rich-raised),var(--rich-well) 34%);border-radius:9px;
+ box-shadow:inset 0 2px 0 rgb(0 0 0/.22),inset 0 0 0 1px color-mix(in srgb,var(--line) 50%,transparent),0 1px 0 var(--rich-highlight)
+}
+.fw-root[data-render=rich][data-local-theme] .control-group{box-shadow:inset 0 1px 0 var(--rich-highlight)}
+.fw-root[data-render=rich][data-local-theme] .appearance-dialog{border-radius:12px;box-shadow:0 30px 60px -20px rgb(0 0 0/.6),inset 0 1px 0 var(--rich-highlight)}
+/* Glass where it is cheap: a single full-screen layer, present only while a dialog is open. */
+.fw-root[data-render=rich] dialog::backdrop{background:rgb(0 0 0/.42);-webkit-backdrop-filter:blur(6px) saturate(1.15);backdrop-filter:blur(6px) saturate(1.15)}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion:reduce){.fw-root[data-render=rich] *,.fw-root[data-render=rich] *::before,.fw-root[data-render=rich] *::after{transition:none!important;animation:none!important}.fw-root[data-render=rich] :is(button,.cell):active{transform:none!important}}
+@media (forced-colors:active){.fw-root[data-render=rich] *,.fw-root[data-render=rich] *::before,.fw-root[data-render=rich] *::after{background-image:none!important;box-shadow:none!important;filter:none!important}}

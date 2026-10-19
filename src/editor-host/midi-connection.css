@@ -1,0 +1,5 @@
+.midi-connection{display:inline-flex;align-items:center;gap:7px;font-size:inherit;color:inherit;white-space:nowrap}
+.midi-connection-dot{display:inline-block;flex:none;width:7px;height:7px;border-radius:50%;background:#85898e;opacity:.5}
+.midi-connection[data-connected=true] .midi-connection-dot{background:#62be86}
+.midi-connection-sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.midi-connection-dot{transform:none!important}}
