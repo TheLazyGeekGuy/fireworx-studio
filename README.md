@@ -2,7 +2,7 @@
 
 A browser editor and librarian for the **TC Electronic FireworX**, built on the MIDI Studio platform. This is an independent community project, not an official TC Electronic product.
 
-**[Open the editor](https://bcr32-studio.github.io/fireworx-studio.github.io/)** · [Français](README.fr.md) · [User manual](docs/instruments/fireworx/USER-MANUAL.en.md)
+**[Open the editor](https://thelazygeekguy.github.io/fireworx-studio/)** · [Français](README.fr.md) · [User manual](docs/instruments/fireworx/USER-MANUAL.en.md)
 
 Alpha release. The protocol target is **FireworX OS 2.00+**; this is not certification of every firmware, MIDI interface or memory card. The application controls external hardware; it does not process audio.
 

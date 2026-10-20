@@ -30,8 +30,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bcr32-studio/fireworx-studio.github.io.git"
+    "url": "https://github.com/TheLazyGeekGuy/fireworx-studio.git"
   },
-  "homepage": "https://bcr32-studio.github.io/fireworx-studio.github.io/",
+  "homepage": "https://thelazygeekguy.github.io/fireworx-studio/",
   "type": "module"
 }

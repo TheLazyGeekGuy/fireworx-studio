@@ -2,7 +2,7 @@
 
 Éditeur et bibliothèque de presets du **TC Electronic FireworX**, dans le navigateur, fondés sur MIDI Studio. Projet communautaire indépendant.
 
-**[Ouvrir l’éditeur](https://bcr32-studio.github.io/fireworx-studio.github.io/)** · [English](README.md) · [Manuel français illustré](docs/instruments/fireworx/USER-MANUAL.fr.md)
+**[Ouvrir l’éditeur](https://thelazygeekguy.github.io/fireworx-studio/)** · [English](README.md) · [Manuel français illustré](docs/instruments/fireworx/USER-MANUAL.fr.md)
 
 Version alpha, cible **FireworX OS 2.00+**. L’application pilote le matériel externe et ne traite pas son audio. La validation de toutes les versions de firmware, interfaces MIDI et cartes reste à faire.
 
