@@ -1,6 +1,6 @@
-# FireworX Studio
+# FireworX Editor
 
-Éditeur et bibliothèque de presets du **TC Electronic FireworX**, dans le navigateur, fondés sur MIDI Studio. Projet communautaire indépendant.
+Éditeur et bibliothèque de presets du multi-effets **FireworX**, dans le navigateur, fondés sur MIDI Studio. Projet communautaire indépendant, sans lien avec le fabricant de l’appareil.
 
 **[Ouvrir l’éditeur](https://thelazygeekguy.github.io/fireworx-studio/)** · [English](README.md) · [Manuel français illustré](docs/instruments/fireworx/USER-MANUAL.fr.md)
 

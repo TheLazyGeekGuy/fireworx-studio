@@ -1,6 +1,6 @@
 # FireworX — Manuel d’utilisation
 
-Édition locale du 19 octobre 2026. Application MIDI Factory / module MIDI Studio, version alpha 0.1.0. Cible protocolaire : TC Electronic FireworX OS 2.00 et ultérieur, d’après MIDI Specification V1.00 du 20 juillet 1999. Cette cible documentaire ne constitue pas une certification de toutes les versions du firmware. Le firmware de l’interface MIDI, par exemple celui d’une mioXL, est distinct.
+Édition locale du 19 octobre 2026. Application MIDI Factory / module MIDI Studio, version alpha 0.1.0. Cible protocolaire : FireworX OS 2.00 et ultérieur, d’après MIDI Specification V1.00 du 20 juillet 1999. Cette cible documentaire ne constitue pas une certification de toutes les versions du firmware. Le firmware de l’interface MIDI, par exemple celui d’une mioXL, est distinct. FireworX Editor est un éditeur indépendant, sans lien avec le fabricant de l’appareil.
 
 ## Démarrer
 
@@ -56,17 +56,17 @@ Pour copier un effet entre presets, choisir un effet dans la fiche de la bibliot
 
 ## Modulations, Alpha et contrôleur externe
 
-L’onglet Modulations rassemble les sources et liens décodés du preset, leurs destinations et leurs transformations éditables. Les liens peuvent aussi être affectés par glisser-déposer vers un paramètre compatible. Certaines destinations ou données non décodées restent protégées.
+L’onglet Modulations est une matrice : une ligne par source, une colonne par paramètre des blocs du preset. Un clic dans une case vide relie la source de la ligne à ce paramètre ; un clic sur une pastille ouvre le détail du lien (Low, Mid, High, Slope, Glide, suppression). Le menu Source met une source en évidence dans la matrice et dans le tableau des liens. Les paramètres que le FireworX ne module pas restent grisés. Certaines destinations ou données non décodées restent protégées.
 
 Une entrée de contrôleur externe peut être choisie indépendamment de l’entrée/sortie du FireworX. MIDI Learn apprend un canal et un CC pour Alpha ou Ext 1 à 8. Vérifier l’affectation affichée et le profil CTRL avant de transmettre.
 
 Apprendre un CC dans le navigateur ne reprogramme pas les affectations globales I/O SETUP → CTRL du FireworX. Il faut faire correspondre le profil local à la configuration physique ; le protocole de lecture/écriture global CTRL n’est pas établi ici. Alpha, Ext, Bypass et Tap utilisent les CC configurés, avec suspension pendant les transactions SysEx protégées.
 
-Le retour reçu peut animer Alpha et les sources externes et montrer une projection de leur effet sur les liens connus. Il ne donne pas la valeur interne exacte de tous les paramètres modulés. Le tempo local peut demander un BPM par taps temporisés sur le CC Tempo confirmé ; l’application ne génère pas d’horloge MIDI continue et ne relit pas le BPM global réel.
+Quand une valeur MIDI arrive pour Alpha ou une source externe, sa ligne, la case de chaque lien et la colonne du paramètre modulé scintillent dans la matrice, ainsi que le réglage du bloc concerné. Il ne donne pas la valeur interne exacte de tous les paramètres modulés. Le tempo local peut demander un BPM par taps temporisés sur le CC Tempo confirmé ; l’application ne génère pas d’horloge MIDI continue et ne relit pas le BPM global réel.
 
 « Effacer tous les liens » exige une confirmation explicite. Pour Freeform, ouvrir cette source, choisir 1 à 32 échantillons puis dessiner la courbe. On peut aussi enregistrer jusqu’à dix secondes de la dernière valeur Alpha connue, terminer puis appliquer la courbe. Dessin et enregistrement restent locaux jusqu’à l’application ; ils ne créent aucune affectation CTRL.
 
-![Modulations : sources, destinations et courbes Low / Mid / High.](screenshots/fr-modulation.png)
+![Modulations : matrice des sources et des paramètres, détail du lien.](screenshots/fr-modulation.png)
 
 ## Bibliothèque et banques
 
@@ -120,7 +120,7 @@ L’application construit cette demande lorsque l’on connecte/lit P0. L’adre
 
 La réponse Data20 étendue est contrôlée : en-tête, Device ID, taille, demi-octets et checksum. Les paramètres éprouvés utilisent de courtes écritures Data21. Les changements de structure passent par une image P0 complète, une lecture de comparaison et une relecture obligatoire. Après une image complète, au moins 8 secondes plus la durée de transmission sont réservées sans GET, CC ni Clock ; la politique actuelle est d’environ 8,9 secondes pour l’image habituelle.
 
-Il n’y a pas de console d’envoi SysEx arbitraire. Seules les commandes admises par les validateurs et la politique de transaction passent. Les conteneurs sont documentés par TC ; la cartographie détaillée des paramètres inclut des travaux tiers et essais locaux, et n’est pas présentée comme une table officielle du constructeur.
+Il n’y a pas de console d’envoi SysEx arbitraire. Seules les commandes admises par les validateurs et la politique de transaction passent. Les conteneurs sont documentés par le fabricant ; la cartographie détaillée des paramètres inclut des travaux tiers et essais locaux, et n’est pas présentée comme une table officielle du constructeur.
 
 ![Moniteur MIDI : filtres et exemples simulés de messages SysEx et CC.](screenshots/fr-monitor.png)
 

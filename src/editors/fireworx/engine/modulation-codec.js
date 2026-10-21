@@ -22,6 +22,18 @@ export function modulationDestinations(buffer){
  }
  return [...new Map(result.map(d=>[destinationKey(d),d])).values()];
 }
+/** Parameters of the preset's blocks that the unit does not accept as modulation targets: their derived ids were left at
+ * ordinal 0 by the device on upload (third-party live check). Display only: shown greyed in the matrix, never written. */
+export function lockedModulationDestinations(buffer){
+ const open=new Set(modulationDestinations(buffer).map(destinationKey)),result=[];
+ for(const page of deviceMap.modulation.pages){
+  if(page.modifier==='Global'||page.group===0)continue;
+  let engines=[];
+  if(page.block>=7)engines=buffer.nodes.filter(n=>n.blockTypeId===page.block&&(!page.subtypes||!subtypedDocuments.has(deviceMap.algorithms[n.algorithm].document)||page.subtypes.includes(deviceMap.algorithms[n.algorithm].variant))).map(n=>({block:page.block,instance:n.instanceIndex,label:`${page.block_name} ${n.instanceIndex+1}`}));
+  for(const engine of engines)for(const p of page.params)if(!p.valid&&p.label){const d={...engine,param:p.dest_id,parameter:p.label,label:`${engine.label} · ${p.label}`};if(!open.has(destinationKey(d)))result.push(d);}
+ }
+ return [...new Map(result.map(d=>[destinationKey(d),d])).values()];
+}
 export function readModulation(buffer){
  const p=buffer.payload??buffer,destinations=buffer.payload?modulationDestinations(buffer):[];
  return Array.from({length:20},(_,slot)=>{const o=start+slot*stride,cat=p[o+6],sub=p[o+7],dest={block:p[o+8],instance:p[o+9],param:p[o+10]*256+p[o+11]};

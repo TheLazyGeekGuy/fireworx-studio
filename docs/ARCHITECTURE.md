@@ -1,6 +1,6 @@
 # Architecture
 
-FireworX Studio is a standalone edition of MIDI Studio, not a second MIDI implementation. The entry point selects one registered editor; the host provides shared browser services.
+FireworX Editor is a standalone edition of MIDI Studio, not a second MIDI implementation. The entry point selects one registered editor; the host provides shared browser services.
 
 | Layer | Location | Responsibility |
 | --- | --- | --- |

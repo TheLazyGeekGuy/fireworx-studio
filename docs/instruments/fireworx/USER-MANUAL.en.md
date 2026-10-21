@@ -1,6 +1,6 @@
 # FireworX — User manual
 
-Local edition, 19 October 2026. MIDI Factory application / MIDI Studio module, alpha version 0.1.0. Protocol target: TC Electronic FireworX OS 2.00 and later, based on MIDI Specification V1.00, 20 July 1999. This documented target is not certification of every firmware release. MIDI interface firmware, such as mioXL firmware, is separate.
+Local edition, 19 October 2026. MIDI Factory application / MIDI Studio module, alpha version 0.1.0. Protocol target: FireworX OS 2.00 and later, based on MIDI Specification V1.00, 20 July 1999. This documented target is not certification of every firmware release. MIDI interface firmware, such as mioXL firmware, is separate. FireworX Editor is an independent editor, not affiliated with the maker of the unit.
 
 ## Getting started
 
@@ -56,17 +56,17 @@ To copy an effect between presets, choose an effect in the library details and C
 
 ## Modulation, Alpha and external controller
 
-The Modulations tab groups decoded preset sources, links, destinations and editable transformations. Assign links by dragging onto a compatible parameter. Some destinations and undecoded data remain protected.
+The Modulations tab is a matrix: one row per source, one column per parameter of the preset's blocks. Clicking an empty cell links the row's source to that parameter; clicking a dot opens the link details (Low, Mid, High, Slope, Glide, delete). The Source menu highlights one source in the matrix and in the links table. Parameters the FireworX does not modulate stay greyed. Some destinations and undecoded data remain protected.
 
 An external controller input can be selected independently of the FireworX input/output pair. MIDI Learn learns a channel and CC for Alpha or Ext 1–8. Check the displayed assignment and CTRL profile before sending.
 
 Learning a CC in the browser does not reprogram the FireworX global I/O SETUP → CTRL assignments. Match the local profile to the physical configuration; global CTRL read/write is not established here. Alpha, Ext, Bypass and Tap use configured CC assignments and pause during protected SysEx transactions.
 
-Received feedback can animate Alpha and external sources and project their effect on known links. It does not expose the exact internal value of every modulated parameter. The local tempo can request BPM using bounded taps on the confirmed Tempo CC; the application does not generate continuous MIDI Clock or read the actual global BPM back.
+When a MIDI value arrives for Alpha or an external source, its row, the cell of each of its links and the modulated parameter's column flash in the matrix, as does the block control concerned. It does not expose the exact internal value of every modulated parameter. The local tempo can request BPM using bounded taps on the confirmed Tempo CC; the application does not generate continuous MIDI Clock or read the actual global BPM back.
 
 Clear all links requires explicit confirmation. For Freeform, open that source, select 1–32 samples and draw the curve. You can also record up to ten seconds of the last known Alpha value, stop and apply the curve. Drawing and recording stay local until applying; neither creates a CTRL assignment.
 
-![Modulation: sources, destinations and Low / Mid / High curves.](screenshots/en-modulation.png)
+![Modulation: matrix of sources and parameters, link details.](screenshots/en-modulation.png)
 
 ## Library and banks
 
@@ -120,7 +120,7 @@ The application constructs this request when connecting/reading P0. The address 
 
 Expanded Data20 replies are checked for header, Device ID, size, nibbles and checksum. Proven parameter fields use short Data21 writes. Structural edits use a complete P0 image, a comparison read and mandatory readback. After a complete image, at least8 seconds plus wire serialization are reserved without GET, CC or Clock; the current policy is about8.9 seconds for the usual image.
 
-There is no arbitrary SysEx sending console. Only commands admitted by validators and transaction policy pass. TC documents the containers; detailed parameter mapping includes third-party work and local trials and is not presented as an official manufacturer offset table.
+There is no arbitrary SysEx sending console. Only commands admitted by validators and transaction policy pass. The maker documents the containers; detailed parameter mapping includes third-party work and local trials and is not presented as an official manufacturer offset table.
 
 ![MIDI monitor: filters and simulated examples of SysEx and CC messages.](screenshots/en-monitor.png)
 

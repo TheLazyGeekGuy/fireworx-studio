@@ -54,6 +54,7 @@ const rows = [
   'Editors|Éditeurs|Editor|Editoren|エディター|Editores|Редакторы|编辑器',
   'Add editor|Ajouter un éditeur|Aggiungi editor|Editor hinzufügen|エディターを追加|Añadir editor|Добавить редактор|添加编辑器',
   'Connected|Connecté|Connesso|Verbunden|接続済み|Conectado|Подключено|已连接',
+  'MIDI settings|Configuration MIDI|Impostazioni MIDI|MIDI-Einstellungen|MIDI設定|Ajustes MIDI|Настройки MIDI|MIDI 设置',
   'Offline|Hors ligne|Non connesso|Offline|オフライン|Sin conexión|Не подключено|离线',
   'Connect MIDI|Connecter le MIDI|Connetti MIDI|MIDI verbinden|MIDIを接続|Conectar MIDI|Подключить MIDI|连接 MIDI',
   'Connect|Connecter|Connetti|Verbinden|接続|Conectar|Подключить|连接',

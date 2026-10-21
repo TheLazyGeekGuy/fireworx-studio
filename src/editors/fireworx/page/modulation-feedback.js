@@ -24,9 +24,26 @@ const explanation='Repère linéaire Low/Mid/High, sans simulation de Slope, Gli
 const originText=o=>o?.direction==='rx'?'MIDI reçu':o?.direction==='tx'?'Ordre MIDI':'Valeur inconnue';
 const referenceText=r=>r.known?`${r.short} ${r.observation.value}/127 · repère ≈ ${Math.round(r.reference)} %`:r.internal?'Source interne · valeur non transmise':'En attente de MIDI';
  function createModulationFeedbackView({getBuffer,getObservations,root=document}){
+ // MIDI activity in the matrix (owner request 2026-10-21): a new value from a source flashes its row, and the cell and
+ // column of every parameter it modulates; the block parameter it drives flashes too.
+ const seen=new Map();
+ function flash(el){if(!el)return;el.classList.remove('mm-live');void el.offsetWidth;el.classList.add('mm-live');clearTimeout(el.__mmLive);el.__mmLive=setTimeout(()=>el.classList.remove('mm-live'),350);}
+ function flashActivity(rows,observations){
+  for(const [kind,o] of Object.entries(observations??{})){
+   if(!o||!Number.isInteger(o.value))continue;const stamp=`${o.value}:${o.at??''}:${o.direction??''}`;if(seen.get(kind)===stamp)continue;const first=!seen.has(kind);seen.set(kind,stamp);if(first&&o.at===undefined)continue;
+   const key=kind==='alpha'?'20:0':/^ext[1-8]$/.test(kind)?`21:${Number(kind.slice(3))-1}`:null;if(!key)continue;
+   flash(root.querySelector(`.mod-matrix tr[data-mm-row="${key}"]>th`));
+   for(const r of rows.filter(r=>r.source===key)){
+    const cell=root.querySelector(`.mod-matrix .mm-grid [data-mm-link="${r.slot}"]`)?.closest('td');flash(cell);
+    if(cell){const head=cell.closest('table')?.tHead?.rows[1]?.cells[cell.cellIndex-1];flash(head);}
+    for(const el of root.querySelectorAll('[data-mod-target]'))if(el.dataset.modTarget===r.destination)flash(el);
+   }
+  }
+ }
  function paint(){
   const buffer=getBuffer();if(!buffer)return;
   const observations=getObservations(),rows=modulationFeedback(buffer,observations);
+  flashActivity(rows,observations);
   for(const el of root.querySelectorAll('[data-mod-source-pick]')){
    const key=el.dataset.modSourcePick,sourceRows=rows.filter(r=>r.source===key),kind=key==='20:0'?'alpha':/^21:[0-7]$/.test(key)?`ext${Number(key.split(':')[1])+1}`:null,o=kind?observations[kind]:null;
    let meter=el.querySelector('.mod-source-live');if(!meter){meter=document.createElement('output');meter.className='mod-source-live';meter.setAttribute('aria-live','off');el.append(meter);}
@@ -37,7 +54,7 @@ const referenceText=r=>r.known?`${r.short} ${r.observation.value}/127 · repère
   for(const r of rows){
    const record=root.querySelector(`[data-mod-slot="${r.slot}"]`);
    if(record){
-    let status=record.querySelector('.mod-live-status');if(!status){status=document.createElement('output');status.className='mod-live-status';status.setAttribute('aria-live','off');record.querySelector('header').insertAdjacentElement('afterend',status);}
+    let status=record.querySelector('.mod-live-status');if(!status){status=document.createElement('output');status.className='mod-live-status';status.setAttribute('aria-live','off');const head=record.querySelector('header');head.insertBefore(status,head.querySelector('[data-mod-delete]'));}
     status.textContent=`${referenceText(r)}${r.known?` · ${originText(r.observation)}`:''}`;status.title=explanation;status.dataset.modLive=String(r.slot);status.dataset.known=String(r.known);
     const svg=record.querySelector('[data-mod-curve]');if(svg){
      let marker=svg.querySelector('.mod-live-marker');if(!marker){marker=document.createElementNS('http://www.w3.org/2000/svg','g');marker.classList.add('mod-live-marker');const line=document.createElementNS(marker.namespaceURI,'line'),dot=document.createElementNS(marker.namespaceURI,'circle');line.setAttribute('y1','5');line.setAttribute('y2','110');dot.setAttribute('r','4');marker.append(line,dot);svg.append(marker);}

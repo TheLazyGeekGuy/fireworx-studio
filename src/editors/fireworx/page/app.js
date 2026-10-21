@@ -9,6 +9,8 @@ import {archivePreset,archiveStudy,restoreJSON} from '../engine/preset-json.js';
 import {costBadge} from '../engine/cost-badge.js';
 import {decorateToolbar} from '../engine/toolbar-icons.js';
 import {matrixViewport} from '../engine/matrix-viewport.js';
+import {mountColumnSplit} from './column-split.js';
+import {focusMatrix} from '../engine/modulation-matrix.js';
 import {bindValueEntry,guardSelectCommits} from '../engine/value-entry.js';
 import {families,findAlgorithm,findFamily,modifiers} from '../engine/catalog.js';
 import {editableControlsFor as controlsFor,validControlValue} from '../engine/parameters.js';
@@ -98,7 +100,8 @@ let editorView='workshop',parameterCursor=0,draftSettingsPage='signal',modulatio
 let panelScreenMode='preset';
 const panelPositions={IN:0,OUT:0,'α MOD':0};
 let connectionMode='free';
-let showPaletteDsp=false;try{showPaletteDsp=localStorage.getItem('fireworx-palette-dsp-v1')==='true';}catch{}
+// Shown by default (owner request 2026-10-21); unchecking it is remembered.
+let showPaletteDsp=true;try{showPaletteDsp=localStorage.getItem('fireworx-palette-dsp-v1')!=='false';}catch{}
 const connectionChoices=new Map();
 const monobloc=createMonobloc({onLayout:()=>requestAnimationFrame(renderWires)});
 const screen=createScreen({onMode:()=>{panelScreenMode='routing';recall.cancel();renderRack();},onLayout:()=>requestAnimationFrame(renderWires)});
@@ -151,8 +154,13 @@ $('mono-expand-library').textContent='Blocs';
 document.querySelector('.mono-status').insertAdjacentHTML('beforeend','<button id="mono-presets">Presets</button>');$('mono-presets').onclick=()=>presetLibrary.open();
 function remember(){past.push(structuredClone(state));if(past.length>50)past.shift();future.length=0;updateHistory();}
 function updateHistory(){if(bufferEditor.active){$('undo').disabled=!bufferEditor.canUndo;$('redo').disabled=!bufferEditor.canRedo;return;}if($('undo'))$('undo').disabled=!past.length;if($('redo'))$('redo').disabled=!future.length;}
+// Owner request 2026-10-21: the grid grows while DSP is left. A position on the row just below the active rows adds it.
+const cheapestBlock=Math.min(...Object.values(deviceMap.algorithms).map(a=>a.dsp).filter(Number.isFinite));
+function draftRoom(){const estimated=draftDspEstimate(state);return estimated!==null&&dspPreferences.ceiling-estimated>=cheapestBlock;}
+function appendOrGrow(){try{return appendPosition(state,state.selected);}catch(e){if(state.rows<8)return {col:0,row:state.rows};throw e;}}
+function growingBase(position){return position&&typeof position==='object'&&position.row===state.rows&&state.rows<8?resizeGrid(state,state.rows+1).state:state;}
 function assertDraftBudget(next){return assertDspTransition(draftDspEstimate(state),draftDspEstimate(next),dspPreferences.ceiling);}
-function applyPlacement(payload,position,swap=false){if(bufferEditor.active){const target=typeof position==='string'?bufferEditor.buffer.nodes.find(n=>n.id===position):position;const anchor=connectionMode!=='free'&&!swap&&bufferEditor.buffer.nodes.find(n=>n.col===target?.col&&n.row===target?.row);return anchor&&!payload.kind.startsWith('routing-')?bufferEditor.connect(payload,anchor.id,connectionMode):bufferEditor.place(payload,target,swap);}try{const anchor=connectionMode!=='free'&&state.nodes.find(n=>n.col===position.col&&n.row===position.row);const next=swap?swapBlocks(state,payload.id,position):anchor&&!payload.kind.startsWith('routing-')?connectStudyBlock(state,payload,anchor.id,connectionMode):dropBlock(state,payload,position);if(JSON.stringify(next.state)===JSON.stringify(state))return;assertDraftBudget(next.state);remember();Object.assign(state,next.state);render();notice(next.message);}catch(e){notice(e.message);}}
+function applyPlacement(payload,position,swap=false){if(bufferEditor.active){const target=typeof position==='string'?bufferEditor.buffer.nodes.find(n=>n.id===position):position;const anchor=connectionMode!=='free'&&!swap&&bufferEditor.buffer.nodes.find(n=>n.col===target?.col&&n.row===target?.row);return anchor&&!payload.kind.startsWith('routing-')?bufferEditor.connect(payload,anchor.id,connectionMode):bufferEditor.place(payload,target,swap);}try{const base=growingBase(position),anchor=connectionMode!=='free'&&base.nodes.find(n=>n.col===position.col&&n.row===position.row);const next=swap?swapBlocks(base,payload.id,position):anchor&&!payload.kind.startsWith('routing-')?connectStudyBlock(base,payload,anchor.id,connectionMode):dropBlock(base,payload,position);if(JSON.stringify(next.state)===JSON.stringify(state))return;assertDraftBudget(next.state);remember();Object.assign(state,next.state);render();notice(next.message);}catch(e){notice(e.message);}}
 
 const notice=message=>{$('notice').textContent=message;};
 const portLinks=createPortLinks({stage:document.querySelector('.routing-stage'),grid:$('grid'),onNotice:notice,
@@ -314,7 +322,7 @@ function renderPalette(){
  $('families').querySelectorAll('[data-add]').forEach(b=>{b.onclick=()=>{if(performance.now()>=ignoreClickUntil)add(b.dataset.add);};bindDragSource(b,{kind:'library',algorithm:b.dataset.add});});
  $('families').querySelectorAll('[data-palette]').forEach(d=>d.ontoggle=()=>{if(!d.isConnected)return;if(d.open)paletteOpen.add(d.dataset.palette);else paletteOpen.delete(d.dataset.palette);});
 }
-function add(id){if(bufferEditor.active)return connectionMode==='free'?bufferEditor.add(id):bufferEditor.connect({kind:'library',algorithm:id},bufferEditor.selected,connectionMode);try{if(connectionMode!=='free'){const next=connectStudyBlock(state,{kind:'library',algorithm:id},state.selected,connectionMode);assertDraftBudget(next.state);remember();Object.assign(state,next.state);render();return notice(next.message);}applyPlacement({kind:'library',algorithm:id},state.target??appendPosition(state,state.selected));}catch(e){notice(e.message);}}
+function add(id){if(bufferEditor.active)return connectionMode==='free'?bufferEditor.add(id):bufferEditor.connect({kind:'library',algorithm:id},bufferEditor.selected,connectionMode);try{if(connectionMode!=='free'){const next=connectStudyBlock(state,{kind:'library',algorithm:id},state.selected,connectionMode);assertDraftBudget(next.state);remember();Object.assign(state,next.state);render();return notice(next.message);}applyPlacement({kind:'library',algorithm:id},state.target??appendOrGrow());}catch(e){notice(e.message);}}
 let nativeDrag=null,ignoreClickUntil=0;
 const dragType='application/x-midi-studio-fireworx';
 function clearDropMarks(){document.querySelectorAll('.drop-ready,.drag-origin').forEach(el=>el.classList.remove('drop-ready','drag-origin'));document.body.classList.remove('dragging-block');}
@@ -347,7 +355,7 @@ function bindDropTargets(){
 }
 function syncMatrixViewport(){
  const rows=bufferEditor.active?bufferEditor.buffer.rows:state.rows,cells=bufferEditor.active?bufferEditor.buffer.cells:[...state.nodes,...(state.routes??[])];
- const view=matrixViewport({rows,cells,target:bufferEditor.active?null:state.target},$('matrix-density').value),flow=document.querySelector('.flow'),routing=$('routing');
+ const view=matrixViewport({rows,cells,target:bufferEditor.active?null:state.target,room:bufferEditor.active||draftRoom(),growRows:!bufferEditor.active},$('matrix-density').value),flow=document.querySelector('.flow'),routing=$('routing');
  flow.classList.add('matrix-adaptive');flow.classList.toggle('overview',view.full);flow.dataset.viewColumns=String(view.columns);flow.dataset.viewRows=String(view.rows);
  for(const el of [flow,routing]){el.style.setProperty('--matrix-view-columns',view.columns);el.style.setProperty('--matrix-view-rows',view.rows);el.style.setProperty('--matrix-height-rows',view.heightRows);}
  $('grid').setAttribute('aria-label',`Matrice audio : ${view.columns} colonnes affichées, ${view.rows} lignes sur ${rows} actives`);
@@ -358,8 +366,8 @@ function syncMatrixViewport(){
 }
 function renderGrid(){
  if(bufferEditor.active){bufferEditor.renderGrid($('grid'));$('grid').querySelectorAll('[data-node]').forEach(b=>bindDragSource(b,{kind:'node',id:b.dataset.node}));$('grid').querySelectorAll('[data-routing-node]').forEach(b=>bindDragSource(b,{kind:'routing-node',from:{col:Number(b.dataset.col),row:Number(b.dataset.row)}}));bindDropTargets();$('grid-status').textContent=`${bufferEditor.buffer.nodes.length} moteurs · ${bufferEditor.buffer.rows} lignes · édition en direct`;$('routing-kind').textContent='Glisser pour déplacer · Maj pour échanger';syncMatrixViewport();syncPaletteCosts();requestAnimationFrame(renderWires);return;}
- $('grid').innerHTML=Array.from({length:state.rows*8},(_,i)=>{const col=i%8,row=Math.floor(i/8),n=state.nodes.find(n=>n.col===col&&n.row===row),a=n&&findAlgorithm(n.algorithm),f=n&&findFamily(n.algorithm),route=state.routes?.find(r=>r.col===col&&r.row===row);return `<button class="cell ${n||route?'':'empty'} ${route?'route-cell':''} ${n?.id===state.selected?'selected':''} ${state.target?.col===col&&state.target?.row===row?'target':''} ${n?.muted?'muted':''}" data-col="${col}" data-row="${row}" ${n?`draggable="true" data-node="${n.id}"`:route?`draggable="true" data-routing-node="${route.type}"`:''} aria-label="Colonne ${col+1}, ligne ${row+1}${n?', '+f.name+' '+a.name:', vide'}" ${n?`aria-pressed="${n.id===state.selected}"`:''}>${n?'<span class="cell-label">'+short(f.id)+' '+costBadge(a.id)+'</span><small>'+a.name+'</small>':route?routingItems.find(x=>x.type===route.type).label:'+'}</button>`;}).join('');
- $('grid').querySelectorAll('.cell').forEach(b=>b.onclick=()=>{if(performance.now()<ignoreClickUntil)return;if(b.dataset.node)select(b.dataset.node);else{state.target={col:Number(b.dataset.col),row:Number(b.dataset.row)};renderGrid();notice(`Case ${state.target.col+1}:${state.target.row+1} choisie. Ajoutez un algorithme à gauche.`);}});
+ $('grid').innerHTML=Array.from({length:Math.min(8,state.rows+1)*8},(_,i)=>{const col=i%8,row=Math.floor(i/8),ghost=row===state.rows;if(ghost)return `<button class="cell empty ghost-row" data-col="${col}" data-row="${row}" data-grow-row="true" aria-label="Colonne ${col+1}, ligne ${row+1} (nouvelle ligne)" title="Nouvelle ligne : y placer un bloc ajoute la ligne ${row+1}">+</button>`;const n=state.nodes.find(n=>n.col===col&&n.row===row),a=n&&findAlgorithm(n.algorithm),f=n&&findFamily(n.algorithm),route=state.routes?.find(r=>r.col===col&&r.row===row);return `<button class="cell ${n||route?'':'empty'} ${route?'route-cell':''} ${n?.id===state.selected?'selected':''} ${state.target?.col===col&&state.target?.row===row?'target':''} ${n?.muted?'muted':''}" data-col="${col}" data-row="${row}" ${n?`draggable="true" data-node="${n.id}"`:route?`draggable="true" data-routing-node="${route.type}"`:''} aria-label="Colonne ${col+1}, ligne ${row+1}${n?', '+f.name+' '+a.name:', vide'}" ${n?`aria-pressed="${n.id===state.selected}"`:''}>${n?'<span class="cell-label">'+short(f.id)+' '+costBadge(a.id)+'</span><small>'+a.name+'</small>':route?routingItems.find(x=>x.type===route.type).label:'+'}</button>`;}).join('');
+ $('grid').querySelectorAll('.cell').forEach(b=>b.onclick=()=>{if(performance.now()<ignoreClickUntil)return;if(b.dataset.node)select(b.dataset.node);else if(b.dataset.growRow){try{const next=resizeGrid(state,state.rows+1);remember();Object.assign(state,next.state);state.target={col:Number(b.dataset.col),row:Number(b.dataset.row)};render();notice(`Ligne ${state.rows} ajoutée ; case ${state.target.col+1}:${state.target.row+1} choisie. Ajoutez un algorithme à gauche.`);}catch(e){notice(e.message);}}else{state.target={col:Number(b.dataset.col),row:Number(b.dataset.row)};renderGrid();notice(`Case ${state.target.col+1}:${state.target.row+1} choisie. Ajoutez un algorithme à gauche.`);}});
  $('grid').querySelectorAll('[data-node]').forEach(b=>bindDragSource(b,{kind:'node',id:b.dataset.node}));
  $('grid').querySelectorAll('[data-routing-node]').forEach(b=>bindDragSource(b,{kind:'routing-node',from:{col:Number(b.dataset.col),row:Number(b.dataset.row)}}));
  bindDropTargets();
@@ -540,8 +548,8 @@ modulationGestures=createModulationGestures({
  activateSignals:()=>{if(bufferEditor.active)bufferEditor.showSettingsPage('signal');else{draftSettingsPage='signal';renderEditors();}},
  selectBlock:select,
  apply:(descriptor,key)=>{if(bufferEditor.active)return bufferEditor.assignModulationTarget(descriptor,key);const next=applyDraftModTarget(state,descriptor,key);remember();Object.assign(state,next);render();},
- openLink:slot=>{if(bufferEditor.active)return bufferEditor.openModulationLink(slot);draftSettingsPage='modulation';renderEditors();document.querySelector(`[data-draft-mod-slot="${slot}"]`)?.scrollIntoView({block:'nearest'});},
- openDestination:key=>{if(bufferEditor.active)return bufferEditor.openModulationTarget(key);draftSettingsPage='modulation';renderEditors();$('draft-mod-destination').value=key;$('draft-mod-source').focus();},
+ openLink:slot=>{if(bufferEditor.active)return bufferEditor.openModulationLink(slot);draftSettingsPage='modulation';renderEditors();focusMatrix(document,{link:slot});},
+ openDestination:key=>{if(bufferEditor.active)return bufferEditor.openModulationTarget(key);draftSettingsPage='modulation';renderEditors();focusMatrix(document,{column:key});},
  onNotice:notice
 });
 const appearance=createAppearance({onChange:()=>{renderRack();requestAnimationFrame(renderWires);}});
@@ -549,6 +557,7 @@ render();
 showTab('monobloc');
 
 new ResizeObserver(()=>requestAnimationFrame(renderWires)).observe(document.querySelector('.routing-stage'));
+const columnSplit=mountColumnSplit({area:document.querySelector('.working-area'),left:document.querySelector('.flow'),right:$('editors'),window,localStorage,ResizeObserver});window.addEventListener('pagehide',()=>columnSplit.dispose());
 // Paint only the three LEDs. Clock traffic never rebuilds the LCD or knobs.
 let indicatorFrame=null,indicatorAlive=true,lastIndicatorPaint=-Infinity;
 function animateIndicators(time){if(!indicatorAlive)return;if(time-lastIndicatorPaint>=25){paintPanelIndicators();lastIndicatorPaint=time;}indicatorFrame=requestAnimationFrame(animateIndicators);}

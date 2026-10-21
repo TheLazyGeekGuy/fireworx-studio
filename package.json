@@ -2,7 +2,7 @@
   "name": "fireworx-studio",
   "version": "0.1.0-alpha.1",
   "private": true,
-  "description": "Browser editor and librarian for TC Electronic FireworX, built on MIDI Studio.",
+  "description": "FireworX Editor: browser editor and librarian for the FireworX, built on MIDI Studio.",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "modules:generate": "node scripts/generate-editor-registrations.mjs",

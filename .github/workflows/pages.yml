@@ -1,4 +1,4 @@
-name: Publish FireworX Studio
+name: Publish FireworX Editor
 on:
   push:
     branches: [main]

@@ -737,4 +737,5 @@ button:focus-visible { outline:2px solid #ffcf87; outline-offset:3px; }
 .studio.standalone-editor{width:100%;max-width:none;min-width:0;margin:0;padding:0;background:var(--theme-bg);color:var(--theme-text)}
 .standalone-editor>header{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:5px 12px;min-height:34px;font-size:12px;border-bottom:1px solid var(--theme-line)}
 .standalone-editor .standalone-theme{display:flex;align-items:center;gap:5px;font-size:11px}.standalone-editor .standalone-theme select{width:auto;font-size:11px;padding:4px 6px}
-.standalone-editor .language-icon-picker{margin-left:auto}.standalone-editor>.fireworx-module{min-width:0}
+.standalone-editor .language-icon-picker{margin-left:auto}
+.standalone-editor>header .midi-settings-button{display:inline-flex;align-items:center;justify-content:center;width:28px;height:26px;padding:0;margin-left:-8px;border:1px solid var(--theme-line);border-radius:3px;background:transparent;color:var(--theme-text);box-shadow:none;cursor:pointer}.standalone-editor>header .midi-settings-button:hover{border-color:var(--theme-accent);color:var(--theme-accent)}.standalone-editor>header .midi-settings-button .ui-icon{width:16px;height:16px}.standalone-editor>.fireworx-module{min-width:0}

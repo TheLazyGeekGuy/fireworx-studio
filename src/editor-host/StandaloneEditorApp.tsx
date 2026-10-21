@@ -6,6 +6,7 @@ import {createEditorRuntime,type EditorRuntime} from './runtime'
 import {automaticMidiAccess} from '../midi-permission'
 import {EditorViewBoundary,EditorViewContent} from './EditorViewBoundary'
 import {MidiConnectionIndicator} from '../MidiConnectionIndicator'
+import {MidiSettingsButton} from './MidiSettingsButton'
 import {translate,useLanguage,LanguagePicker} from '../i18n'
 import {loadTheme,themes,themeStorageKey,type Theme} from '../themes'
 import {validDisplayStyle,displayStyleKey,type DisplayStyle} from '../display-styles'
@@ -38,7 +39,7 @@ export function StandaloneEditorApp({installation,nativePresence,tools,presetExc
   const entry=runtime?.workspace.list()[0],record=entry&&runtime?.views.get(entry.id)
   const fallback=<div role="alert"><p>{t('Editor unavailable')}</p><button onClick={()=>{if(entry)runtime?.views.retry(entry.id)}}>{t('Retry editor')}</button></div>
   return <DocumentationProvider value={record?.view?.openDocumentation}><main className="studio standalone-editor" data-theme={theme}>
-    {entry&&<header><strong>{entry.name}</strong> <MidiConnectionIndicator midi={runtime!.workspace.getTransport(entry.id)}/><LanguagePicker/><label className="standalone-theme">{t('Global theme')}<select aria-label={t('Global theme')} value={theme} onChange={e=>{const value=e.currentTarget.value as Theme;setTheme(value);try{localStorage.setItem(themeStorageKey,value)}catch{/* optional preference */}}}>{themes.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label>{tools}</header>}
+    {entry&&<header><strong>{entry.name}</strong> <MidiConnectionIndicator midi={runtime!.workspace.getTransport(entry.id)}/><MidiSettingsButton open={record?.view?.openMidiSettings}/><LanguagePicker/><label className="standalone-theme">{t('Global theme')}<select aria-label={t('Global theme')} value={theme} onChange={e=>{const value=e.currentTarget.value as Theme;setTheme(value);try{localStorage.setItem(themeStorageKey,value)}catch{/* optional preference */}}}>{themes.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label>{tools}</header>}
     {entry&&record?.view?<EditorViewBoundary key={record.revision} fallback={fallback} onFault={e=>runtime!.views.fail(entry.id,e)}><EditorViewContent view={record.view} presentation={runtime!.presentation.instance(entry.id)} active locked={entry.snapshot.locked} appearance={runtime!.workspace.appearance(entry.id)} onAppearance={change=>runtime!.workspace.setAppearance(entry.id,{...entry.appearance,...change})} checkpoint={state=>{if(!runtime!.disposed&&runtime!.views.has(entry.id))runtime!.workspace.updateViewState(entry.id,state)}}/></EditorViewBoundary>:record?.error?fallback:<span>…</span>}
     {error&&<p role="status">{error}</p>}
   </main></DocumentationProvider>

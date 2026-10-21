@@ -1,3 +1,6 @@
+import {frenchToEnglish,englishFragments} from './locales-en'
+import {applyLanguage,loadLanguage,type CompiledLanguage} from '../../editor-host/page-languages'
+import {languageLoaders} from './i18n'
 /** English keys; French adapter for the extracted presenters. Patch names/values are never translated. */
 export const french:Record<string,string>={
  'Recall · memory check':'Rappel · contrôle de la mémoire','Recall · hardware selection':'Rappel · sélection matérielle','Recall · silent DSP pause':'Rappel · pause DSP sans aucun message','Recall · P0 readback':'Rappel · relecture de P0','Memory recalled on FireworX and P0 read back; no STORE.':'Mémoire rappelée sur le FireworX et P0 relu ; aucun STORE.',
@@ -23,25 +26,40 @@ const english=new Map(Object.entries(french).map(([en,fr])=>[fr,en]))
 const patterns:[RegExp,string][]=[
  [/^Sauvegarder →/g,'Save →'],[/algorithmes/g,'algorithms'],[/champs réglables/g,'editable fields'],[/moteurs/g,'engines'],[/moteur/g,'engine'],[/capture locale/g,'local capture'],[/reçu du matériel/g,'received from device'],[/réglage\(s\) dans la capture locale/g,'local capture change(s)'],[/\bligne(s)?\b/g,'row$1'],[/Coût DSP estimé/g,'Estimated DSP cost'],[/ESTIMATION PRUDENTE/g,'CAUTIOUS ESTIMATE'],[/Tolérance/g,'Tolerance'],[/au-delà de/g,'beyond'],[/DÉPASSEMENT ESTIMÉ · AUTORISÉ/g,'ESTIMATED EXCESS · ALLOWED'],[/Plafond/g,'Ceiling'],[/Réserve/g,'Reserve'],[/DISPONIBLE/g,'AVAILABLE'],[/avant plafond/g,'below ceiling'],[/FIREWORX · APPARENCE LOCALE/g,'FIREWORX · LOCAL APPEARANCE'],[/Choisissez/g,'Choose'],[/En attente de MIDI Clock/g,'Waiting for MIDI Clock'],[/En direct · relu/g,'Live · verified']
 ]
+const fragments=englishFragments.map(([source,replacement])=>[new RegExp(source,'g'),replacement] as [RegExp,string])
 const fixed=new Set(['script','style','code','pre','option[data-wire-value]'])
 /** Translation stays in the presentation layer: never change option values, datasets, input values or archives. */
 export function createPageLocale(root:HTMLElement,language:string,getProtectedNames:()=>string[]=()=>[]){
- let current=language==='fr'?'fr':'en',disposed=false,pending=false
+ let current=language==='fr'?'fr':'en',disposed=false,pending=false,target=language,table:CompiledLanguage|null=null
+ // Languages other than French and English: the English text is translated by that language's table (loaded on demand).
+ const useLanguage=(value:string)=>{target=value;table=null;if(value==='fr'||value==='en')return
+  void loadLanguage(languageLoaders,value).then(t=>{if(disposed||target!==value)return;table=t;paint()})}
  let protectedNames:string[]=[]
  const original=new WeakMap<Node,{source:string;output:string}>(),attributes=new WeakMap<Element,Map<string,{source:string;output:string}>>()
  const tr=(source:string)=>{
   const text=source.trim(),padding=source.match(/^(\s*)/)?.[0]??'',tail=source.match(/(\s*)$/)?.[0]??''
   const name=protectedNames.find(name=>text===name||text.startsWith(name+' ·'))??'',body=name?text.slice(name.length):text
-  const key=english.get(body)??body
+  const flat=body.replace(/\s+/g,' ')
+  const key=english.get(body)??frenchToEnglish[flat]??body
   let out=current==='fr'?(french[key]??body):key
-  if(current==='en')for(const [pattern,replacement] of patterns)out=out.replace(pattern,replacement)
+  // Every other language goes through English: French source text left over is translated (exact, then fragment rules),
+  // then the host language's table (i18n/<lang>.ts) translates that English text.
+  if(current==='en'){for(const [pattern,replacement] of patterns)out=out.replace(pattern,replacement)
+   const exact=frenchToEnglish[out.replace(/\s+/g,' ')];if(exact)out=exact;else for(const [pattern,replacement] of fragments)out=out.replace(pattern,replacement)}
+  if(current==='en'&&table)out=applyLanguage(table,out)
   return padding+name+out+tail
  }
+ const trPlaceholder=(source:string)=>{if(current!=='en')return source;const text=source.trim(),exact=english.get(text)??frenchToEnglish[text.replace(/\s+/g,' ')]
+  const inEnglish=exact?source.replace(text,exact):source.replace(/(\d+(?:[.,]\d+)?) u\. démo/g,'$1 demo u.')
+  return exact&&table?applyLanguage(table,inEnglish,{fragments:false}):inEnglish}
  function paint(){if(disposed)return;pending=false;observer.disconnect();protectedNames=getProtectedNames().filter(Boolean)
   const walk=root.ownerDocument.createTreeWalker(root,NodeFilter.SHOW_TEXT)
   let node:Node|null
-  while((node=walk.nextNode())){const parent=node.parentElement;if(!parent||[...fixed].some(s=>parent.closest(s))||parent.closest('svg,.preset-name,[data-preset-key],.parameter-value,option:not([value]),.randomizer-name strong,#presets-current-name,#presets-detail h3,#presets-bank-tree,#presets-source-tree,#presets-tag-tree'))continue
-   const before=node.textContent??'',known=original.get(node),source=known&&known.output===before?known.source:before,output=tr(source)
+  while((node=walk.nextNode())){const parent=node.parentElement;if(!parent||parent.closest('script,style'))continue
+   // Names, values and trees of user data are never translated by rule; only a whole known interface placeholder there
+   // (« Aucun buffer », « Aucune étiquette. ») is, and the demo unit of a value.
+   const guarded=[...fixed].some(s=>parent.closest(s))||!!parent.closest('svg,.preset-name,[data-preset-key],.parameter-value,option:not([value]),.randomizer-name strong,#presets-current-name,#presets-detail h3,#presets-bank-tree,#presets-source-tree,#presets-tag-tree')
+   const before=node.textContent??'',known=original.get(node),source=known&&known.output===before?known.source:before,output=guarded?trPlaceholder(source):tr(source)
    original.set(node,{source,output});if(output!==before)node.textContent=output
   }
   for(const element of root.querySelectorAll('[title],[aria-label],[placeholder],[data-hint]')){
@@ -51,5 +69,6 @@ export function createPageLocale(root:HTMLElement,language:string,getProtectedNa
   observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','placeholder','data-hint']})
  }
  const observer=new MutationObserver(()=>{if(!pending){pending=true;queueMicrotask(paint)}})
- paint();return {set(value:string){current=value==='fr'?'fr':'en';root.lang=current;paint()},paint,dispose(){disposed=true;observer.disconnect()}}
+ useLanguage(language);root.lang=language
+ paint();return {set(value:string){current=value==='fr'?'fr':'en';useLanguage(value);root.lang=value;paint()},paint,dispose(){disposed=true;observer.disconnect()}}
 }

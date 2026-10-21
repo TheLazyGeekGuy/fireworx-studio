@@ -7,7 +7,7 @@ import {createGuardedTransport} from './engine/guarded-transport.js'
 import {editorLivePolicy} from './engine/hardware-policy.js'
 
 /** Browser services owned by one mounted page. No global DOM/theme mutation or second MIDI sender. */
-export function createBrowserEnvironment(root:HTMLElement,context:EditorViewContext,session:FireworxSession){
+export function createBrowserEnvironment(root:HTMLElement,context:EditorViewContext&{onTopology?:(fn:()=>void)=>()=>void},session:FireworxSession){
  const win=root.ownerDocument.defaultView!,shadow=root.getRootNode() as ShadowRoot
  const cleanups=new Set<()=>void>(),timeouts=new Set<number>(),intervals=new Set<number>(),frames=new Map<number,FrameRequestCallback>(),nativeFrames=new Map<number,number>(),observers=new Set<ResizeObserver>(),urls=new Set<string>()
  const lifetime=new AbortController(),pageEvents=new EventTarget(),preferences=new Map<string,string>(),prefix=`midi-studio.fireworx.${context.id}.`
@@ -54,6 +54,9 @@ export function createBrowserEnvironment(root:HTMLElement,context:EditorViewCont
   cleanups.add(()=>{opening++;route?.close();route=null});portCache.set(port.id,{physical:port,facade});return facade
  }
  const accessEvents=new EventTarget(),offPorts=context.broker.subscribe(()=>accessEvents.dispatchEvent(new Event('statechange')));cleanups.add(offPorts)
+ // Port arrivals and departures reach the page too (owner report 2026-10-21): the broker only notifies lease changes,
+ // so ports published after the first MIDI request (native presence check) stayed hidden until a second click.
+ const offTopology=context.onTopology?.(()=>accessEvents.dispatchEvent(new Event('statechange')));if(offTopology)cleanups.add(offTopology)
  const access={get sysexEnabled(){return context.access.sysexEnabled},get inputs(){return new Map([...context.access.inputs].map(([id,p])=>[id,inputFacade(p)]))},get outputs(){return new Map([...context.access.outputs].map(([id,p])=>[id,{id,name:p.name,type:'output',state:p.state}]))},addEventListener:accessEvents.addEventListener.bind(accessEvents),removeEventListener:accessEvents.removeEventListener.bind(accessEvents)}
  // Preserve the prototype's same-origin, physical-pair Web Lock as well as the host lease.
  // Its callback/release stays owned by device-view; reconnect awaits its release before reacquisition.

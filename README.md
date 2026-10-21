@@ -1,6 +1,6 @@
-# FireworX Studio
+# FireworX Editor
 
-A browser editor and librarian for the **TC Electronic FireworX**, built on the MIDI Studio platform. This is an independent community project, not an official TC Electronic product.
+A browser editor and librarian for the **FireworX** multi-effects processor, built on the MIDI Studio platform. This is an independent community project, not affiliated with the maker of the unit.
 
 **[Open the editor](https://thelazygeekguy.github.io/fireworx-studio/)** · [Français](README.fr.md) · [User manual](docs/instruments/fireworx/USER-MANUAL.en.md)
 
@@ -55,4 +55,4 @@ The seven offline test suites use synthetic ports and generated fixtures; they n
 
 ## License
 
-MIT; see [LICENSE](LICENSE). FireworX and TC Electronic names identify the supported hardware and remain the property of their respective owners.
+MIT; see [LICENSE](LICENSE). The FireworX name identifies the supported hardware and remains the property of its owner.

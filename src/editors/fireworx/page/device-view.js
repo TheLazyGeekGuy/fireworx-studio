@@ -15,6 +15,7 @@ import {frameWithPayload} from '../engine/live-protocol.js';
 import {findAlgorithm,findFamily} from '../engine/catalog.js';
 import {parameterGroups,renderSignalSettings} from '../engine/workspaces.js';
 import {routingForCell} from '../engine/routing-topology.js';
+import {focusMatrix} from '../engine/modulation-matrix.js';
 import {modulationTransformControls,transformModulation,glideMilliseconds,readModulation,linkLabels} from '../engine/modulation-codec.js';
 import {hardwareIncident,editorLivePolicy} from '../engine/hardware-policy.js';
 import {editorTransfers} from '../engine/editor-transfer.js';
@@ -94,7 +95,7 @@ const $=id=>document.getElementById(id);
  let performanceFrame=null;
  const feedbackView=createModulationFeedbackView({getBuffer:()=>active?buffer:null,getObservations:()=>performanceControls.observations});
  function paintPerformance(){if(performanceFrame!==null||!alive)return;performanceFrame=requestAnimationFrame(()=>{performanceFrame=null;if(!alive)return;feedbackView.paint();onPanelChange();});}
- const performanceControls=createPerformanceControls({getSession:()=>origin==='device'&&!connecting&&!session?.paused&&!session?.exclusiveBusy?session:null,getBuffer:()=>active?buffer:null,getAccess:()=>access,getDeviceInputId:()=>$('device-input')?.value,onNotice,onValue:paintPerformance,onAssign:kind=>{api.showUtility('matrix');if($('mod-source')){$('mod-source').closest('details').open=true;$('mod-source').value=`21:${Number(kind.slice(3))-1}`;$('mod-source').focus();}},onOpenLink:slot=>api.openModulationLink(slot),onTempo:settings=>indicators.configure(settings),onActivity:indicators.activity,getTempo:()=>indicators.snapshot});
+ const performanceControls=createPerformanceControls({getSession:()=>origin==='device'&&!connecting&&!session?.paused&&!session?.exclusiveBusy?session:null,getBuffer:()=>active?buffer:null,getAccess:()=>access,getDeviceInputId:()=>$('device-input')?.value,onNotice,onValue:paintPerformance,onAssign:kind=>{api.showUtility('matrix');focusMatrix(document,{source:`21:${Number(kind.slice(3))-1}`});},onOpenLink:slot=>api.openModulationLink(slot),onTempo:settings=>indicators.configure(settings),onActivity:indicators.activity,getTempo:()=>indicators.snapshot});
  document.body.insertAdjacentHTML('beforeend',`<dialog id="device-dialog" class="library-dialog device-dialog" aria-label="Connexion FireworX"><header><h2>Buffer FireworX</h2><button id="device-close">Fermer ×</button></header><p id="device-message" role="status"></p><details><summary>Règles d’échange MIDI</summary><p>${hardwareIncident.message}</p></details><div class="device-port-grid"><label>Entrée MIDI<select id="device-input"><option value="">Choisir les ports…</option></select></label><label>Sortie MIDI<select id="device-output"><option value="">Choisir les ports…</option></select></label><label>Device ID SysEx<input id="device-id" type="number" min="0" max="127" step="1" value="0"></label></div><div class="device-dialog-actions"><button id="device-discover">Choisir les ports MIDI</button><button id="device-read" disabled>Connecter et lire P0</button><button id="device-disconnect" disabled>Déconnecter</button></div><p>Connexion automatique après deux lectures identiques. Paramètres, algorithmes, blocs, routage et modulations actifs. Alpha / Bypass / Clock utilisent leur profil MIDI. L’édition automatique reste dans P0. STORE User / Carte : préparation, sauvegardes puis confirmation explicite dans la bibliothèque.</p><hr><label>Ouvrir une capture .syx locale<input id="device-file" type="file" accept=".syx"></label><p>La capture doit contenir une seule réponse étendue FireworX. Ouvrir un fichier ne transmet rien.</p><a href="../../docs/instruments/fireworx/COMPACT-MIDI-INTEGRATION.md">Couverture, sources et limites</a></dialog>`);
  $('device-dialog').querySelector('.device-port-grid').insertAdjacentHTML('afterend',`<details id="device-timing"><summary>Temporisation et diagnostic MIDI</summary><div class="device-port-grid"><label>Regroupement des gestes (ms)<input id="device-rate" type="number" min="0" max="2000" step="1" value="200"></label><label>Intervalle minimal d’écriture (ms)<input id="device-gap" type="number" min="3000" max="10000" step="1" value="3000"></label><label>Relecture après chaque écriture (ms)<input id="device-settle" type="number" min="4500" max="10000" step="1" value="4500"></label><label>Pause après image complète Data20 (ms)<input id="device-structural-settle" type="number" min="${editorLivePolicy.structuralSettle}" max="30000" step="1" value="${editorLivePolicy.structuralSettle}"></label><label>Attente de réponse (ms)<input id="device-timeout" type="number" min="22000" max="30000" step="1" value="22000"></label></div><p>Les dernières valeurs remplacent celles en attente. Chaque écriture est relue avant la suivante ; les nouveaux gestes ne repoussent pas cette vérification. Les pauses et relectures restent appliquées ; les CC attendent la fin du SysEx. L’horloge est interrompue pendant ces transactions. Blocs, routage et modulations partent en image P0 complète après un GET de contrôle ; aucun message n’est émis pendant la pause qui suit.</p><p id="device-metrics">Aucun échange MIDI.</p></details>`);
  document.querySelector('#device-timing .device-port-grid').insertAdjacentHTML('beforeend','<label>Relire P0 au repos<select id="device-idle-poll"><option value="0">Désactivé</option><option value="10000">Toutes les 10 secondes</option><option value="5000">Toutes les 5 secondes</option></select></label>');
@@ -125,7 +126,7 @@ const $=id=>document.getElementById(id);
  function openAlphaLink(index=alphaCursor){
   const links=alphaLinks(),r=links[index];if(!r)return message('Aucun lien Alpha dans ce preset');
   alphaCursor=index;alphaLinkReturn=true;utility='matrix';parameter=modulationTransformControls(buffer).findIndex(f=>f.slot===r.slot&&f.linkField==='low');onChange();
-  const section=document.querySelector(`[data-mod-slot="${r.slot}"]`);section?.scrollIntoView({block:'nearest'});section?.querySelector('[data-mod-dial]')?.focus();
+  requestAnimationFrame(()=>focusMatrix(document,{link:r.slot}));
  }
  function graphic(){
   const times=fields().filter(f=>f.enc==='ms'&&/time|delay/i.test(f.fieldName));
@@ -181,7 +182,8 @@ const $=id=>document.getElementById(id);
   clearTimeout(clearArmed);clearArmed=null;button.textContent='Vider';
   try{await journal.clear();journalStatus();$('device-journal-status').textContent='Journal vidé · '+$('device-journal-status').textContent;}catch(e){$('device-journal-status').textContent='Vidage impossible : '+e.message;}
  };
- $('device-tools').onclick=()=>{$('device-dialog').showModal();refresh();journalStatus();};
+ // Opening the dialog lists the ports at once (no connection unless automatic connection is on).
+ $('device-tools').onclick=()=>{$('device-dialog').showModal();refresh();journalStatus();if(access)fillPorts();else if(!busy)void execute(discover);};
  $('device-close').onclick=()=>$('device-dialog').close();
  function fillPorts(){
   if(!access)return;
@@ -199,8 +201,9 @@ const $=id=>document.getElementById(id);
  async function discover(){
   if(!navigator.requestMIDIAccess)throw new Error('Autorisez Web MIDI dans un navigateur compatible pour la connexion automatique.');
   access=await navigator.requestMIDIAccess({sysex:true});if(!alive)return;
-  if(!access.sysexEnabled)throw new Error('Autorisation SysEx nécessaire dans le navigateur');
+  // Ports are listed even without SysEx, so a refusal reads as a refusal, not as « no port » (owner report 2026-10-21).
   access.removeEventListener('statechange',portChange);access.addEventListener('statechange',portChange);fillPorts();
+  if(!access.sysexEnabled)throw new Error('Ports MIDI visibles, mais le navigateur refuse le SysEx (indispensable au FireworX) : autorisez « contrôle des appareils MIDI » pour ce site, puis rechargez la page.');
   if(!hardwareIncident.automaticConnection)message(hardwareIncident.message);else if(exactPair())scheduleConnect(0);else message(fireworxPortPair(access).ambiguous?'Plusieurs ports FireworX détectés : choisissez explicitement l’entrée et la sortie.':'En attente de ports dont le nom contient FireworX ; la bibliothèque locale reste disponible.');
  }
  async function connect(){
@@ -308,7 +311,7 @@ const $=id=>document.getElementById(id);
   else settingsNavigation(tabs,{page,items:(page==='signal'?buffer.nodes.map(n=>blockSelector(n,{selected,device:true})).join(''):'')+utilitySelect,onPage:next=>{utility=next==='modulation'?'matrix':null;parameter=0;onChange();}});
   $('device-utility').onchange=()=>{utility=$('device-utility').value||null;parameter=0;onChange();};
   tabs.querySelectorAll('[data-device-node]').forEach(b=>b.onclick=()=>api.select(b.dataset.deviceNode));
-  if(utility==='matrix'){parameter=Math.min(parameter,Math.max(0,fields().length-1));modulationUI=renderModulationEditor(container,{getBuffer:()=>buffer,edit:editMatrix,onNotice:message,disabled:connecting||origin==='device'&&(!!session?.paused||!!session?.exclusiveBusy),openPerformance:()=>performanceControls.open(),onSelect:(slot,field)=>{parameter=fields().findIndex(f=>f.slot===slot&&f.linkField===field);onPanelChange();}});onPanelChange();return;}
+  if(utility==='matrix'){parameter=Math.min(parameter,Math.max(0,fields().length-1));modulationUI=renderModulationEditor(container,{getBuffer:()=>buffer,edit:editMatrix,onNotice:message,disabled:connecting||origin==='device'&&(!!session?.paused||!!session?.exclusiveBusy),openPerformance:()=>performanceControls.open(),openModifier:id=>{utility=id;parameter=0;onChange();},onSelect:(slot,field)=>{parameter=fields().findIndex(f=>f.slot===slot&&f.linkField===field);onPanelChange();}});onPanelChange();return;}
   if(utility==='setup'){renderSetup(container);return;}
   const n=node();if(!n){container.innerHTML='<p class="helper">Aucun moteur reconnu dans cette capture. Les octets restent conservés.</p>';return;}
   const controls=fields().map(f=>({...f,label:f.displayLabel,values:f.values??(deviceMap.tables[f.table]?Object.fromEntries(deviceMap.tables[f.table].texts.map((t,i)=>[i+deviceMap.tables[f.table].index_range[0],t])):undefined)})),groups=parameterGroups(familyId(),controls);
@@ -401,8 +404,8 @@ const $=id=>document.getElementById(id);
   get modulationContext(){return active?{buffer:changes.size?decodeDeviceBuffer(encodeEditBuffer(buffer,changes)):buffer,disabled:connecting||busy||buffer.preset!==0||origin==='device'&&(!!session?.paused||!!session?.exclusiveBusy),selected,utility}:null;},
   assignModulationTarget(descriptor,key){if(api.modulationContext?.disabled)throw Error('Édition de modulation indisponible');editMatrix(b=>applyModulationTarget(b,descriptor,key),true);onChange();},
   showSettingsPage(page){utility=page==='modulation'?'matrix':null;parameter=0;onChange();},
-  openModulationTarget(key){api.showUtility('matrix');const form=document.querySelector('.mod-new');if(form)form.open=true;const select=document.getElementById('mod-destination');if(select){select.value=key;select.focus();}},
-  openModulationLink(slot){utility='matrix';parameter=modulationTransformControls(buffer).findIndex(f=>f.slot===slot&&f.linkField==='low');onChange();requestAnimationFrame(()=>{const record=document.querySelector(`[data-mod-slot="${slot}"]`);record?.scrollIntoView({block:'nearest'});record?.querySelector('[data-mod-dial]')?.focus();});},
+  openModulationTarget(key){api.showUtility('matrix');focusMatrix(document,{column:key});},
+  openModulationLink(slot){utility='matrix';parameter=modulationTransformControls(buffer).findIndex(f=>f.slot===slot&&f.linkField==='low');onChange();requestAnimationFrame(()=>focusMatrix(document,{link:slot}));},
 
   copyEffectFrom(frame,nodeId){const b=decodeDeviceBuffer(frame),n=b.nodes.find(n=>n.id===nodeId);if(!n)throw Error('Effet source introuvable');effectClipboard={buffer:b,node:{...n},name:`${b.name} · ${n.algorithm}`};onNotice('Effet copié depuis la bibliothèque ; choisissez sa destination dans l’éditeur.');if(active)onChange();},
   openLocal(frame){assertTransactionIdle();const next=decodeDeviceBuffer(frame);if(next.preset!==0)throw Error('Copie P0 locale requise');autoEnabled=false;disconnect();adopt(next,'file');},

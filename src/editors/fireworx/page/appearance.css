@@ -80,9 +80,10 @@
 .modern-analog{position:absolute;right:18px;bottom:15px;font-size:9px;color:var(--muted)}.modern-analog summary{cursor:pointer}.modern-analog[open]{background:var(--surface);border:1px solid var(--line);padding:12px;z-index:7}.modern-analog .modern-rotary{display:inline-flex;vertical-align:top;width:80px;margin-top:12px}
 
 /* Three actual layouts, applied only to the monobloc workspace. */
+.column-split{display:none}
 @media(min-width:1200px){
  .fw-root[data-local-layout=console].monobloc-mode #routing{grid-template-columns:170px minmax(0,1fr);gap:16px}
- .fw-root[data-local-layout=console].monobloc-mode .working-area{grid-template-columns:minmax(310px,.95fr) minmax(360px,1.05fr);grid-template-rows:30px 34px minmax(0,1fr) 30px;grid-template-areas:'head options' 'tools instances' 'chain editor' 'dsp editor';gap:8px 22px}
+ .fw-root[data-local-layout=console].monobloc-mode .working-area{position:relative;grid-template-columns:var(--fw-chain-width,minmax(310px,.95fr)) minmax(360px,1.05fr);grid-template-rows:30px 34px minmax(0,1fr) 30px;grid-template-areas:'head options' 'tools instances' 'chain editor' 'dsp editor';gap:8px 22px}
  .fw-root[data-local-layout=console].monobloc-mode .flow{max-height:none;padding:10px 0;align-items:start;overflow:auto}
  .fw-root[data-local-layout=console].monobloc-mode .routing-stage{min-width:760px;flex:1 0 760px}
  .fw-root[data-local-layout=console].monobloc-mode .cell{height:62px}
@@ -93,8 +94,14 @@
  .fw-root[data-local-layout=console].monobloc-mode .grouped-controls{overflow:visible;flex:none}
  .fw-root[data-local-layout=console].monobloc-mode .engine-toolbar{flex-wrap:wrap;flex:none}
  .fw-root[data-local-layout=console].monobloc-mode .device-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
- .fw-root[data-local-layout=console].monobloc-mode .matrix-options label{display:none}
+ .fw-root[data-local-layout=console].monobloc-mode .matrix-options{gap:10px}
+ .fw-root[data-local-layout=console].monobloc-mode .matrix-options label{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+ .fw-root[data-local-layout=console].monobloc-mode .matrix-options select{margin:0;font-size:10px;padding:2px 4px;max-width:120px}
  .fw-root[data-local-layout=console].monobloc-mode .chain-toolbar{overflow:auto}
+ .fw-root[data-local-layout=console].monobloc-mode .column-split{display:block;position:absolute;top:0;bottom:0;width:10px;cursor:col-resize;z-index:4;touch-action:none}
+ .fw-root[data-local-layout=console].monobloc-mode .column-split:after{content:'';position:absolute;left:4px;top:0;bottom:0;width:2px;background:transparent;transition:background .15s}
+ .fw-root[data-local-layout=console].monobloc-mode .column-split:is(:hover,:focus-visible,.dragging):after{background:var(--accent)}
+ .fw-root[data-local-layout=console].monobloc-mode .column-split:focus-visible{outline:none}
 }
 @media(min-width:651px){
  .fw-root[data-local-layout=focus].monobloc-mode .working-area{grid-template-rows:29px 30px var(--matrix-height,160px) 30px 28px 33px minmax(0,1fr)}

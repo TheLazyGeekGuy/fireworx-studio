@@ -3,7 +3,7 @@
     "manifest": {
       "id": "tc-electronic-fireworx-editor",
       "modelId": "tc-electronic-fireworx",
-      "name": "TC Electronic FireworX",
+      "name": "FireworX Editor",
       "version": "0.1.0",
       "sdkVersion": 1,
       "stateSchemaVersion": 1,
@@ -16,8 +16,8 @@
       ]
     },
     "presentation": {
-      "manufacturer": "TC Electronic",
-      "model": "FireworX",
+      "manufacturer": "FireworX",
+      "model": "Editor",
       "preview": {
         "src": "/editor-previews/tc-electronic-fireworx.svg",
         "width": 1900,
@@ -80,7 +80,7 @@
           },
           {
             "id": "heritage",
-            "name": "H\u00e9ritage / LCD vert",
+            "name": "Héritage / LCD vert",
             "scheme": "dark",
             "colors": {
               "background": "#121513",
@@ -96,17 +96,17 @@
           {
             "id": "studio",
             "name": "Studio",
-            "description": "Biblioth\u00e8que \u00e0 gauche, cha\u00eene au-dessus des r\u00e9glages."
+            "description": "Bibliothèque à gauche, chaîne au-dessus des réglages."
           },
           {
             "id": "console",
             "name": "Console",
-            "description": "Cha\u00eene et biblioth\u00e8que \u00e0 gauche, inspecteur permanent \u00e0 droite."
+            "description": "Chaîne et bibliothèque à gauche, inspecteur permanent à droite."
           },
           {
             "id": "focus",
             "name": "Focus",
-            "description": "Biblioth\u00e8que repliable, grande matrice et r\u00e9glages sur toute la largeur."
+            "description": "Bibliothèque repliable, grande matrice et réglages sur toute la largeur."
           }
         ],
         "surfaces": [

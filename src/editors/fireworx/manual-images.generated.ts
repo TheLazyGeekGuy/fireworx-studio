@@ -19,7 +19,7 @@ import image16 from '../../../docs/instruments/fireworx/screenshots/fr-randomize
 import image17 from '../../../docs/instruments/fireworx/screenshots/fr-settings.png'
 export const manualImages={
   'screenshots/en-chain.png':{src:image0,width:1456,height:354},
-  'screenshots/en-connection.png':{src:image1,width:1560,height:1280},
+  'screenshots/en-connection.png':{src:image1,width:1560,height:1240},
   'screenshots/en-hardware.png':{src:image2,width:3788,height:352},
   'screenshots/en-library.png':{src:image3,width:3080,height:1800},
   'screenshots/en-modern.png':{src:image4,width:3788,height:482},

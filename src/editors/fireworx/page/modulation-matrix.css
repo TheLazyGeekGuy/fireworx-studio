@@ -1,0 +1,76 @@
+/* Modulation matrix: sources × assignable parameters (layout inspired by the CtrlrX panel's MODIFIERS > MATRIX). */
+.mod-matrix{container-type:inline-size;--mm-dot:var(--accent);--mm-pick:#e8a33c;margin:10px 0 14px;border:1px solid var(--line);background:var(--bg);padding:10px 12px;font-size:12px}
+.mod-matrix>header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+/* One title style for the block library, the signal chain and the modulation matrix (owner request 2026-10-21). */
+.mod-matrix>header strong,.fw-root.monobloc-mode .palette>.eyebrow,.fw-root.monobloc-mode .section-head .chain-title{color:var(--accent);letter-spacing:1px;font-size:13px;font-weight:700;font-family:inherit;text-transform:uppercase}
+.fw-root.monobloc-mode .palette>.eyebrow{margin:2px 0 8px;line-height:1.25}
+.mod-matrix>header>span:not(.mm-view){color:var(--muted);font-size:11px}
+.mod-matrix>header label{display:flex;align-items:center;gap:6px;font-size:11px;margin-left:auto}
+.mod-matrix select{font-size:11px;padding:4px 6px}
+.mod-matrix .mm-view{display:inline-flex;gap:2px}
+.mod-matrix button{font-size:11px}
+.mod-matrix [aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
+.mod-matrix .mm-body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px;align-items:start}
+.mod-matrix .mm-scroll{overflow:auto;max-height:560px;border:1px solid var(--line)}
+.mod-matrix .mm-grid{border-collapse:separate;border-spacing:0;font-size:10px}
+.mod-matrix .mm-grid th{font-weight:500;color:var(--muted);background:var(--surface);position:sticky;z-index:1}
+.mod-matrix .mm-grid thead tr:first-child th{top:0;z-index:2}
+.mod-matrix .mm-grid thead tr:nth-child(2) th{top:22px;z-index:2}
+.mod-matrix .mm-grid .mm-corner{left:0;z-index:3;min-width:110px;text-align:left;padding:4px 8px;font-size:9px}
+.mod-matrix .mm-group{padding:4px 6px;border-left:1px solid var(--line);text-transform:uppercase;letter-spacing:.5px;color:var(--text);white-space:nowrap;text-align:center}
+.mod-matrix .mm-param{padding:4px 2px;border-left:1px solid var(--line);height:72px;vertical-align:bottom}
+.mod-matrix .mm-param span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);max-height:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 auto;font-size:9px}
+.mod-matrix .mm-grid tbody th{position:sticky;left:0;z-index:1;text-align:left;padding:3px 8px;white-space:nowrap;border-top:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.mod-matrix .mm-grid tbody th small{color:var(--accent);margin-left:4px}
+.mod-matrix .mm-grid tbody tr.mm-active th{color:var(--accent)}
+.mod-matrix .mm-cell{width:24px;min-width:24px;height:22px;padding:0;border-left:1px solid color-mix(in srgb,var(--line) 60%,transparent);border-top:1px solid color-mix(in srgb,var(--line) 60%,transparent);position:relative}
+.mod-matrix .mm-cell.mm-trail{background:linear-gradient(var(--mm-dot),var(--mm-dot)) center/100% 2px no-repeat}
+.mod-matrix .mm-cell.mm-linked:not(.mm-trail){background:linear-gradient(var(--mm-dot),var(--mm-dot)) left center/50% 2px no-repeat}
+.mod-matrix .mm-cell.mm-current{background-color:color-mix(in srgb,var(--mm-pick) 18%,transparent)}
+.mod-matrix .mm-param.mm-current{color:var(--mm-pick)}
+/* Cells show the trail drawn on the td: the page's generic button background must not cover it. */
+.mod-matrix .mm-cell button{display:block;width:100%;height:100%;min-height:0;padding:0;margin:0;border:0!important;background:transparent!important;box-shadow:none!important;cursor:pointer;border-radius:0}
+.mod-matrix .mm-cell .mm-empty:hover:not(:disabled),.mod-matrix .mm-cell .mm-empty:focus-visible{background:color-mix(in srgb,var(--accent) 22%,transparent)!important}
+.mod-matrix .mm-cell .mm-empty:disabled{cursor:default}
+.mod-matrix .mm-dot{position:relative}
+.mod-matrix .mm-dot::after{content:'';position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--bg);border:2px solid var(--mm-dot);box-shadow:inset 0 0 0 2px var(--mm-dot)}
+.mod-matrix .mm-dot.mm-selected::after{border-color:var(--mm-pick);box-shadow:inset 0 0 0 2px var(--mm-pick),0 0 0 3px color-mix(in srgb,var(--mm-pick) 35%,transparent)}
+.mod-matrix .mm-none{padding:16px;color:var(--muted)}
+.mod-matrix .mm-side section{border:1px solid var(--line);padding:8px 10px;margin-bottom:10px;background:var(--surface)}
+.mod-matrix .mm-side h4{margin:0 0 8px;font-size:10px;letter-spacing:1px;color:var(--mm-pick);font-weight:600}
+.mod-matrix .mm-side dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0 0 8px;font-size:11px}
+.mod-matrix .mm-side dt{color:var(--muted)}
+.mod-matrix .mm-side dd{margin:0;color:var(--accent);overflow-wrap:anywhere}
+.mod-matrix .mm-side label{display:block;font-size:10px;color:var(--muted);margin:6px 0}
+.mod-matrix .mm-side select{width:100%;margin-top:3px}
+.mod-matrix .mm-side p{font-size:10px;color:var(--muted);line-height:1.4;margin:6px 0 0}
+.mod-matrix .mm-transform{display:grid;grid-template-columns:1fr;gap:2px;margin-bottom:8px}
+.mod-matrix .mm-transform label{display:grid;grid-template-columns:42px 1fr 46px;align-items:center;gap:6px;margin:2px 0}
+.mod-matrix .mm-transform input{width:100%;accent-color:var(--accent)}
+.mod-matrix .mm-transform output{font:11px ui-monospace,monospace;color:var(--accent);text-align:right}
+.mod-matrix>footer{letter-spacing:normal;text-transform:none;font-family:inherit;padding:0;border:0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0;font-size:10px;color:var(--muted)}
+.mod-matrix>footer span:first-child{color:var(--accent)}
+.mod-matrix .mm-summary summary{cursor:pointer;font-size:11px;font-weight:600;padding:4px 0}
+.mod-matrix .mm-summary table{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+.mod-matrix .mm-summary th{font-size:9px;color:var(--muted);text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-weight:500}
+.mod-matrix .mm-summary td{padding:3px 6px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.mod-matrix .mm-summary .mm-row-select{background:transparent;border:0;padding:2px 0;text-align:left;color:var(--text);cursor:pointer}
+.mod-matrix .mm-summary tr.mm-selected-row td{background:color-mix(in srgb,var(--mm-pick) 15%,transparent)}
+/* Narrow host (the modulation tab beside the signal chain): the grid takes the width, detail and form go below. */
+@container (max-width:900px){.mod-matrix .mm-body{grid-template-columns:1fr}.mod-matrix .mm-side{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.mod-matrix .mm-side section{margin:0}}
+@media(max-width:900px){.mod-matrix .mm-scroll{max-height:420px}}
+.mod-matrix .mm-locked-toggle{margin-left:0!important}
+.mod-matrix .mm-locked-toggle input{margin:0}
+.mod-matrix .mm-param.mm-locked{color:color-mix(in srgb,var(--muted) 55%,transparent);font-style:italic}
+.mod-matrix .mm-cell.mm-locked{background-color:color-mix(in srgb,var(--muted) 14%,transparent);background-image:repeating-linear-gradient(135deg,transparent 0 4px,color-mix(in srgb,var(--muted) 18%,transparent) 4px 5px);cursor:not-allowed}
+.mod-matrix .mm-cell.mm-locked.mm-trail{background-image:linear-gradient(var(--mm-dot),var(--mm-dot)),repeating-linear-gradient(135deg,transparent 0 4px,color-mix(in srgb,var(--muted) 18%,transparent) 4px 5px);background-size:100% 2px,auto;background-position:center,0 0;background-repeat:no-repeat,repeat}
+.mod-matrix .mm-dot.mm-transformed::after{border-radius:2px}
+.mod-matrix .mm-grid tbody th .mm-source{background:transparent!important;border:0!important;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left;box-shadow:none!important}
+.mod-matrix .mm-grid tbody th .mm-source:hover,.mod-matrix .mm-grid tbody th .mm-source:focus-visible{text-decoration:underline;color:var(--accent)}
+
+/* Source focus and MIDI activity (owner request 2026-10-21). */
+.mod-matrix tr.mm-focus>th,.mod-matrix tr.mm-focus>td{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.mod-matrix .mm-summary tr.mm-focus>td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.fw-root .mm-live{animation:mm-live .35s ease-out}
+@keyframes mm-live{0%{background:color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:inset 0 0 0 1px var(--accent)}100%{background:transparent;box-shadow:none}}
+@media(prefers-reduced-motion:reduce){.fw-root .mm-live{animation:none;outline:2px solid var(--accent)}}

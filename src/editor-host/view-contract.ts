@@ -17,7 +17,7 @@ export interface EditorViewContext {
   /** Optional instance-local display name; never changes module identity or device selection. */
   setDisplayName?:(name:string)=>void
 }
-export interface EditorViewRuntime { render: (props:EditorViewProps)=>ReactNode; refresh: ()=>void; dispose: ()=>void; /** Optional local manual, with no server navigation or MIDI side effects. */ openDocumentation?:()=>void }
+export interface EditorViewRuntime { render: (props:EditorViewProps)=>ReactNode; refresh: ()=>void; dispose: ()=>void; /** Optional local manual, with no server navigation or MIDI side effects. */ openDocumentation?:()=>void; /** Optional: opens the editor's own MIDI settings (ports, connection) beside the host's connection status; opening sends nothing. */ openMidiSettings?:()=>void }
 export const editorViewContractVersion=1
 export interface EditorPresentation {
   manufacturer:string

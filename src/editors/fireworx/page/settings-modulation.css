@@ -16,7 +16,7 @@
 @media(max-width:1099px){.monobloc-mode .working-area{grid-template-rows:29px 30px var(--matrix-height,126px) 30px var(--settings-navigation-height,60px) minmax(0,1fr)}}
 /* Source chips are actual modulation sources; the audio-block drag MIME stays separate. */
 .mod-source-shelf{border-block:1px solid var(--line);padding:8px 0;margin:4px 0 8px;min-width:0;grid-column:1/-1}
-.mod-shelf-title{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:6px}.mod-shelf-title span{font-size:10px;color:var(--muted)}
+.mod-shelf-title{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;cursor:pointer;list-style:none}.mod-shelf-title::-webkit-details-marker{display:none}.mod-shelf-title strong::before{content:"▸ ";color:var(--accent)}.mod-source-shelf[open]>.mod-shelf-title{margin-bottom:6px}.mod-source-shelf[open]>.mod-shelf-title strong::before{content:"▾ "}.mod-shelf-title:focus-visible{outline:2px solid var(--accent)}.mod-shelf-title span{font-size:10px;color:var(--muted)}
 .mod-source-shelf>div:last-child{display:flex;flex-wrap:wrap;gap:4px}
 .fw-root[data-local-theme] .mod-source-shelf button{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:transparent;box-shadow:none;border-radius:3px;padding:4px 7px;font-size:10px;min-height:25px;cursor:grab}
 .mod-source-shelf button:active{cursor:grabbing}.mod-source-shelf button:focus-visible{outline:2px solid var(--accent)}.mod-source-symbol{font:15px monospace;color:var(--accent)}.mod-source-shelf small{font:9px monospace;min-width:14px;padding:1px 3px;border-radius:2px;background:color-mix(in srgb,var(--accent) 12%,var(--bg));color:var(--accent)}
@@ -64,3 +64,4 @@
 .perf-route-state{color:var(--accent)}.perf-route-targets{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
 .perf-route-targets ul{margin:4px 0;padding-left:16px}.perf-route-targets button{padding:2px 4px;font-size:11px;white-space:normal;text-align:left;box-shadow:none}
 @media(max-width:500px){#performance-dialog .perf-ext-values{grid-template-columns:minmax(0,1fr)}}
+

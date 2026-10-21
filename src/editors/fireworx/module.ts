@@ -24,7 +24,7 @@ export interface FireworxSession extends EditorSession {
 }
 /** Registration/import allocates no ports, DOM, storage or active transaction. */
 export const fireworxModule:EditorModule={
- manifest:{id:'tc-electronic-fireworx-editor',modelId:'tc-electronic-fireworx',name:'TC Electronic FireworX',version:'0.1.0',sdkVersion:1,stateSchemaVersion:1,capabilities:['patch-sysex','volatile-edit-buffer','preset-library','randomizer','isolated-midi-lease']},
+ manifest:{id:'tc-electronic-fireworx-editor',modelId:'tc-electronic-fireworx',name:'FireworX Editor',version:'0.1.0',sdkVersion:1,stateSchemaVersion:1,capabilities:['patch-sysex','volatile-edit-buffer','preset-library','randomizer','isolated-midi-lease']},
  validateState,validateQuery:acceptsQuery,validateEditBufferWrite:acceptsEditBuffer,validatePresetStoreWrite:acceptsPresetStore,
  create(context,restored):FireworxSession {
   let state=restored===undefined?defaultState():validateState(restored),locked=false,disposed=false,page:PageController|null=null,error:string|null=null,live:any=null

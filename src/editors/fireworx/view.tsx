@@ -25,7 +25,8 @@ import randomizerStyle from './page/randomizer.css?raw'
 import modulationStyle from './page/settings-modulation.css?raw'
 import dspStyle from './page/dsp-budget.css?raw'
 import richStyle from './page/rich-render.css?raw'
-const styles=[baseStyle,appearanceStyle,settingsStyle,matrixStyle,randomizerStyle,modulationStyle,dspStyle,richStyle].join('\n')+`
+import matrixModStyle from './page/modulation-matrix.css?raw'
+const styles=[baseStyle,appearanceStyle,settingsStyle,matrixStyle,randomizerStyle,modulationStyle,dspStyle,richStyle,matrixModStyle].join('\n')+`
  :host{display:block;min-width:0;width:100%;contain:layout style}.fw-root{font-size:14px;position:relative;min-width:0;max-width:100%;overflow:auto;height:calc(100dvh - 100px);min-height:600px}
  .fw-root main{max-width:none}.fw-root .tabs[hidden]{display:none!important}.fw-root #protocol,.fw-root #modulation{display:none!important}
  .fw-root .appearance-tools{margin:0;padding:5px 10px;min-height:36px}.fw-root .mono-status>span{display:none}.fw-root .module-inherit{font-size:11px;padding:5px 8px}
@@ -33,14 +34,16 @@ const styles=[baseStyle,appearanceStyle,settingsStyle,matrixStyle,randomizerStyl
  @media(max-width:850px){.fw-root{height:auto;min-height:700px}.fw-root.monobloc-mode main{height:auto;min-height:700px}}
 `
 type Mounted={environment:ReturnType<typeof createBrowserEnvironment>;page:any;locale:ReturnType<typeof createPageLocale>;root:HTMLElement}
-export function FireworxView({context,onDocumentationReady,...props}:EditorViewProps&{context:EditorViewContext;onDocumentationReady?:(open:(()=>void)|undefined)=>void}){
+export function FireworxView({context,onDocumentationReady,onMidiSettingsReady,...props}:EditorViewProps&{context:EditorViewContext;onDocumentationReady?:(open:(()=>void)|undefined)=>void;onMidiSettingsReady?:(open:(()=>void)|undefined)=>void}){
  const session=context.session as FireworxSession,language=useLanguage(),host=useRef<HTMLDivElement>(null),mounted=useRef<Mounted|null>(null)
  const latest=useRef({props,language});latest.current={props,language}
  const [error,setError]=useState(''),[monitor,setMonitor]=useState(false),[manual,setManual]=useState<ManualSection|null>(null),[screenRevision,setScreenRevision]=useState(0)
  useEffect(()=>{onDocumentationReady?.(()=>setManual('start'));return()=>onDocumentationReady?.(undefined)},[onDocumentationReady])
+ // Host MIDI icon beside the connection status: the « MIDI / Buffer » dialog (ports, connection, transfers).
+ useEffect(()=>{onMidiSettingsReady?.(()=>{(mounted.current?.root.querySelector('#device-tools') as HTMLButtonElement|null)?.click()});return()=>onMidiSettingsReady?.(undefined)},[onMidiSettingsReady])
  const snapshot=useSyncExternalStore(session.subscribe,session.getSnapshot,session.getSnapshot)
  const t=(key:string)=>language==='fr'?(french[key]??key):key
- usePresetExchange(context.presets,{id:context.id,moduleId:fireworxModule.manifest.id,stateVersion:1,name:'TC Electronic FireworX',isLocked:()=>session.getSnapshot().locked,capture:()=>({name:patchName(validateState(session.serialize())),state:session.serialize()}),validate:validateState,load:value=>session.dispatch({type:'replace',state:value})},context.lifecycle?.signal)
+ usePresetExchange(context.presets,{id:context.id,moduleId:fireworxModule.manifest.id,stateVersion:1,name:'FireworX Editor',isLocked:()=>session.getSnapshot().locked,capture:()=>({name:patchName(validateState(session.serialize())),state:session.serialize()}),validate:validateState,load:value=>session.dispatch({type:'replace',state:value})},context.lifecycle?.signal)
  useLayoutEffect(()=>{
   const element=host.current!;const shadow=element.shadowRoot??element.attachShadow({mode:'open'}),sheet=new CSSStyleSheet(),root=document.createElement('div')
   // Constructed CSS and CSSOM setters work under style-src 'self'; no inline

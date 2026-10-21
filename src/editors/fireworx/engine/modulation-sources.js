@@ -1,5 +1,0 @@
-import {modulationSources,sourceKey} from './modulation-codec.js';
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function modulationSourcesShelf({used=[],disabled=false}={}){
- return `<section class="mod-source-shelf" aria-label="Sources de modulation"><div class="mod-shelf-title"><strong>Sources</strong><span>Glisser vers un paramètre ou un bloc · cliquer pour affecter</span></div><div>${modulationSources.map(s=>{const count=used.filter(r=>r.source.cat===s.cat&&r.source.sub===s.sub).length;return `<button type="button" data-mod-source-pick="${sourceKey(s)}" draggable="${!disabled}" ${disabled?'disabled':''} aria-label="Affecter ${esc(s.label)}" data-hint="${esc(s.label)} · glisser vers Éléments du signal, un bloc ou un paramètre"><span class="mod-source-symbol" aria-hidden="true">${s.cat===20?'α':s.cat===25||s.cat===26?'∿':s.cat===24?'⌁':s.cat===21?'↗':'◇'}</span>${esc(s.label)}${count?`<small>${count}</small>`:''}</button>`;}).join('')}</div></section>`;
-}
