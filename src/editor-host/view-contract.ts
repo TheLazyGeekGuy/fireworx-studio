@@ -9,6 +9,8 @@ import type {PresetExchange} from './preset-exchange'
 import type {LocalAppearance} from './local-appearance'
 export interface EditorViewProps { active: boolean; locked: boolean; appearance: Appearance; onAppearance: (change: AppearanceOverride)=>void; checkpoint: (state:unknown)=>void; presentation?:PresentationInstance }
 export interface EditorViewContext {
+  /** Host session resume: retain local data instead of automatically replacing it from the device. */
+  recovered?:boolean
   lifecycle?: {signal:AbortSignal;onDispose:(cleanup:()=>void)=>(()=>void)}
   id: string; initial: unknown; session: EditorSession; lease: MidiLease; broker: MidiBroker; access: MidiAccess
   request: ()=>ReturnType<typeof automaticMidiAccess>
