@@ -8,6 +8,7 @@ const CACHE = PREFIX + BUILD_ID
 const URLS = new Set(ENTRIES.map(entry => new URL(entry.url, SCOPE).href))
 const REQUIRED = PRECACHE === null ? ENTRIES : ENTRIES.filter(entry => PRECACHE.includes(entry.url))
 const INDEX = new URL('index.html', SCOPE).href
+const EDITOR = new URL('editor/index.html', SCOPE).href
 let preparing = null
 
 async function ready() {
@@ -62,14 +63,16 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   const request = event.request, url = new URL(request.url)
   if (request.method !== 'GET' || url.origin !== SCOPE.origin) return
-  const navigation = request.mode === 'navigate' && [SCOPE.pathname, new URL(INDEX).pathname].includes(url.pathname)
+  const editorNavigation = request.mode === 'navigate' && ['editor/','editor/index.html'].some(path=>new URL(path,SCOPE).pathname===url.pathname)
+  const navigation = editorNavigation || request.mode === 'navigate' && [SCOPE.pathname, new URL(INDEX).pathname].includes(url.pathname)
+  const documentURL = editorNavigation ? EDITOR : INDEX
   if (!navigation && !URLS.has(url.href)) return // Never cache APIs, arbitrary requests, uploads or external sites.
   event.respondWith((async () => {
-    const cache = await caches.open(CACHE), cached = await cache.match(navigation ? INDEX : url.href)
+    const cache = await caches.open(CACHE), cached = await cache.match(navigation ? documentURL : url.href)
     if (cached) return cached // Pin HTML and used chunks to this build, online as well as offline.
-    const entry=ENTRIES.find(entry=>new URL(entry.url,SCOPE).href===(navigation?INDEX:url.href))
-    const response=await fetch(new Request(navigation?INDEX:url.href,{credentials:'same-origin',integrity:entry.integrity}))
-    if(response.ok&&response.type!=='opaque')await cache.put(navigation?INDEX:url.href,response.clone())
+    const entry=ENTRIES.find(entry=>new URL(entry.url,SCOPE).href===(navigation?documentURL:url.href))
+    const response=await fetch(new Request(navigation?documentURL:url.href,{credentials:'same-origin',integrity:entry.integrity}))
+    if(response.ok&&response.type!=='opaque')await cache.put(navigation?documentURL:url.href,response.clone())
     return response
   })())
 })

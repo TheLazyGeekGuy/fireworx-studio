@@ -7,7 +7,7 @@ export function verifyDistribution(directory){
  const manifest=JSON.parse(readFileSync(path.join(directory,'midi-studio-build.json'),'utf8'))
  assert.equal(manifest.format,'midi-studio-distribution');assert.equal(manifest.version,1)
  const selection=resolveDistribution({modules:manifest.modules,mode:manifest.mode,library:manifest.library})
- assert.match(manifest.registrationSha256,/^[a-f0-9]{64}$/);assert.ok(existsSync(path.join(directory,'index.html')))
+ assert.match(manifest.registrationSha256,/^[a-f0-9]{64}$/);assert.ok(existsSync(path.join(directory,'index.html')));assert.ok(existsSync(path.join(directory,'editor/index.html')))
  assert.ok(Array.isArray(manifest.includedSources)&&manifest.includedSources.length>0)
  const sources=new Set(manifest.includedSources)
  assert.ok([...sources].every(s=>typeof s==='string'&&s.startsWith('src/')&&!s.includes('..')))

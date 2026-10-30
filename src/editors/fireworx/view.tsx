@@ -37,7 +37,7 @@ type Mounted={environment:ReturnType<typeof createBrowserEnvironment>;page:any;l
 export function FireworxView({context,onDocumentationReady,onMidiSettingsReady,...props}:EditorViewProps&{context:EditorViewContext;onDocumentationReady?:(open:(()=>void)|undefined)=>void;onMidiSettingsReady?:(open:(()=>void)|undefined)=>void}){
  const session=context.session as FireworxSession,language=useLanguage(),host=useRef<HTMLDivElement>(null),mounted=useRef<Mounted|null>(null)
  const latest=useRef({props,language});latest.current={props,language}
- const [error,setError]=useState(''),[monitor,setMonitor]=useState(false),[manual,setManual]=useState<ManualSection|null>(null),[screenRevision,setScreenRevision]=useState(0)
+ const [error,setError]=useState(''),[monitor,setMonitor]=useState(false),[manual,setManual]=useState<ManualSection|null>(()=>typeof location!=='undefined'&&new URLSearchParams(location.search).get('manual')==='1'?'start':null),[screenRevision,setScreenRevision]=useState(0)
  useEffect(()=>{onDocumentationReady?.(()=>setManual('start'));return()=>onDocumentationReady?.(undefined)},[onDocumentationReady])
  // Host MIDI icon beside the connection status: the « MIDI / Buffer » dialog (ports, connection, transfers).
  useEffect(()=>{onMidiSettingsReady?.(()=>{(mounted.current?.root.querySelector('#device-tools') as HTMLButtonElement|null)?.click()});return()=>onMidiSettingsReady?.(undefined)},[onMidiSettingsReady])

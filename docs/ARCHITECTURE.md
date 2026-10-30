@@ -4,7 +4,8 @@ FireworX Editor is a standalone edition of MIDI Studio, not a second MIDI implem
 
 | Layer | Location | Responsibility |
 | --- | --- | --- |
-| Entry/build | `src/main.tsx`, `vite.config.mts`, `build/` | One-editor selection, relative assets, CSP and offline cache |
+| Presentation site | `index.html`, `site/`, `public/site/assets/` | Dynamic bilingual landing page at `/`, interactive starfield canvas, workflow & FAQ |
+| Entry/build | `editor/index.html`, `src/main.tsx`, `src/deployment-base.ts`, `vite.config.mts`, `build/` | Editor entry at `/editor/`, one-editor selection, relative assets, CSP and offline cache |
 | Host | `src/editor-host/` | Installation, lifecycle, MIDI access/broker, leases, permissions, history and shared presentation |
 | Shared services | `src/i18n.tsx`, `src/themes.ts`, `src/library/` | Language, host theme, local file library |
 | FireworX adapter | `src/editors/fireworx/registration.tsx`, `session.ts`, `browser-environment.ts` | Editor contracts and host integration |

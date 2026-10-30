@@ -10,6 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
+    # GitHub only. Forgejo/Gitea read .github/workflows when they have no .forgejo/workflows; on such a mirror the job
+    # is skipped instead of running on the mirror's runners.
+    if: github.server_url == 'https://github.com'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4

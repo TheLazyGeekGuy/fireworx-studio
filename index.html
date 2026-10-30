@@ -1,13 +1,492 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#121315" />
-    <title>FireworX Editor</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="doc_title">FireworX Studio &amp; Librarian — MIDI Studio</title>
+  <meta name="description" content="FireworX Studio: browser editor, 8×8 signal matrix, modulation matrix, local librarian, and seeded DSP variation studio for the FireworX multi-effects processor (OS 2.00+)." data-i18n-content="doc_desc">
+  <link rel="icon" type="image/svg+xml" href="./site/assets/mark.svg">
+  <link rel="stylesheet" href="./site/style.css">
+</head>
+<body id="top">
+<a class="skip-link" href="#main-content" data-i18n="skip_link">Skip to content</a>
+
+<canvas id="stars-canvas" aria-hidden="true"></canvas>
+
+<header class="navbar">
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="FireworX Studio, home" data-i18n-aria="nav_brand_aria">
+      <img src="./site/assets/mark.svg" alt="" width="32" height="32">
+      <span>FireworX <small>STUDIO</small></span>
+    </a>
+    <nav aria-label="Main navigation" data-i18n-aria="nav_main_aria">
+      <a href="#duo" data-i18n="nav_duo">Workspaces</a>
+      <a href="#fonctions" data-i18n="nav_features">Features</a>
+      <a href="#fonctionnement" data-i18n="nav_workflow">Routing &amp; P0</a>
+      <a href="#disponibilite" data-i18n="nav_roadmap">Roadmap</a>
+      <a href="./editor/?manual=1" data-i18n="nav_manual">User Manual</a>
+      <div class="lang-switch" role="group" aria-label="Language selection" data-i18n-aria="lang_switch_aria">
+        <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-btn" data-lang="fr" aria-pressed="false">FR</button>
+      </div>
+      <button type="button" class="stars-toggle" id="stars-toggle" aria-label="Toggle starfield style" title="Toggle starfield mode">
+        <span aria-hidden="true">✦</span> <span class="stars-label" data-i18n="stars_label">Stars</span>
+      </button>
+    </nav>
+    <div class="nav-actions">
+      <button class="nav-cta" data-access data-i18n="nav_cta">Quick start</button>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+<section class="hero section">
+  <div class="hero-heading">
+    <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> <span data-i18n="hero_eyebrow">MIDI Studio · FireworX OS 2.00+ · alpha v0.1.0-alpha.1</span></p>
+    <h1>FireworX<span data-i18n-html="hero_subtitle">Studio <i>&amp;</i> Librarian</span></h1>
+    <p class="hero-copy" data-i18n-html="hero_copy">Your 8×8 routing matrix. Your 38 multi-effect algorithms. Your modulation links.<br>A visual browser editor, local librarian, and seeded variation studio with guarded P0 SysEx transport.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="#duo" data-product="matrix"><span data-i18n="hero_btn_editor">Explore the workspaces</span> <span aria-hidden="true">↓</span></a>
+      <a class="button secondary" href="./editor/"><span data-i18n="hero_btn_open">Open editor</span> <span aria-hidden="true">↗</span></a>
+      <a class="button tertiary" href="./editor/?manual=1"><span class="badge-hw" aria-hidden="true">OS 2.00+</span> <span data-i18n="hero_btn_manual">Illustrated User Manual</span> <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+  <figure class="hero-product">
+    <div class="hero-showcase">
+      <img src="./site/assets/en-hardware.png" width="2328" height="236" alt="FireworX Studio 1U hardware rack facade showing LCD routing matrix, input/output level meters, 12 effect family keys, Recall/Store/Effects/Mod buttons, and Parameter/Value/Alpha Mod wheels" data-i18n-src="hero_img_hw_src" data-i18n-alt="hero_img_hw_alt" fetchpriority="high">
+      <div class="hero-showcase-grid">
+        <img src="./site/assets/en-chain.png" width="1364" height="330" alt="FireworX Studio signal chain matrix showing Delay 1 Stereo, Filters 1 Resochord, and Chorus 1 Advanced Flanger wired in series" data-i18n-src="hero_img_chain_src" data-i18n-alt="hero_img_chain_alt" loading="lazy">
+        <img src="./site/assets/en-settings.png" width="1410" height="1014" alt="FireworX Studio block settings page showing Input on the left, Time and Feedback parameters in the middle, and Output routing on the right" data-i18n-src="hero_img_settings_src" data-i18n-alt="hero_img_settings_alt" loading="lazy">
+      </div>
+    </div>
+    <figcaption data-i18n="hero_caption">FireworX Studio · Hardware 1U Facade, Signal Matrix &amp; Three-Column Block Inspector ("Prism Echo" preset)</figcaption>
+  </figure>
+  <div class="hero-tags reveal">
+    <span data-i18n="hero_tag_1">Hardware &amp; Modern Facades · 8×8 Signal Matrix</span>
+    <span data-i18n="hero_tag_2">Modulation Matrix · Alpha &amp; Ext 1–8 MIDI Learn</span>
+    <span data-i18n="hero_tag_3">Local Librarian · Seeded Randomizer &amp; Protected P0</span>
+  </div>
+</section>
+
+<section class="experience section" id="duo">
+  <div class="section-heading reveal">
+    <p class="eyebrow" data-i18n="duo_eyebrow">01 / Three complementary views</p>
+    <h2 data-i18n-html="duo_title">Chain, Modulate &amp; Organize.<br><span>One unified studio.</span></h2>
+    <p data-i18n="duo_lead">FireworX Studio brings together the complete architecture of the FireworX: dual hardware/modern facades with an 8×8 routing matrix, a visual source-to-parameter modulation matrix, and a progressive preset librarian with seeded variations.</p>
+  </div>
+  <div class="product-switch reveal" role="tablist" aria-label="Discover the workspaces" data-i18n-aria="tab_switch_aria">
+    <button id="tab-matrix" role="tab" aria-selected="true" aria-controls="panel-matrix" tabindex="0">
+      <span class="tab-icon" aria-hidden="true">🎛</span> <span class="tab-title" data-i18n="tab_matrix">Facade &amp; Matrix</span> <span class="tab-meta" data-i18n="tab_matrix_sub">38 Algorithms · 8×8 Grid</span>
+    </button>
+    <button id="tab-modulation" role="tab" aria-selected="false" aria-controls="panel-modulation" tabindex="-1">
+      <span class="tab-icon" aria-hidden="true">☵</span> <span class="tab-title" data-i18n="tab_modulation">Modulation &amp; Alpha</span> <span class="tab-meta" data-i18n="tab_modulation_sub">Matrix · Ext 1–8 · Freeform</span>
+    </button>
+    <button id="tab-librarian" role="tab" aria-selected="false" aria-controls="panel-librarian" tabindex="-1">
+      <span class="tab-icon" aria-hidden="true">✦</span> <span class="tab-title" data-i18n="tab_librarian">Librarian &amp; Randomize</span> <span class="tab-meta" data-i18n="tab_librarian_sub">Banks · Seeded DSP</span>
+    </button>
+  </div>
+
+  <!-- Panel 1: Facade, Matrix & Block Settings -->
+  <div class="product-panel" id="panel-matrix" role="tabpanel" aria-labelledby="tab-matrix">
+    <div class="product-media">
+      <div class="window-top">
+        <span class="traffic" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span data-i18n="matrix_window_title">FireworX Studio — Hardware Facade, Signal Matrix &amp; Block Settings</span>
+        <span class="window-note" data-i18n="matrix_window_note">OS 2.00+ · P0 Verified</span>
+      </div>
+      <div class="media-stack">
+        <img src="./site/assets/en-hardware.png" alt="FireworX 1U hardware rack facade with LCD matrix and rotary encoders" data-i18n-src="matrix_hw_src" data-i18n-alt="matrix_hw_alt" width="2328" height="236" loading="lazy">
+        <img src="./site/assets/en-settings.png" alt="Three-column block inspector with Input, Parameters, and Output controls" data-i18n-src="matrix_settings_src" data-i18n-alt="matrix_settings_alt" width="1410" height="1014" loading="lazy">
+      </div>
+    </div>
+    <div class="product-description">
+      <span class="eyebrow" data-i18n="matrix_eyebrow">Sculpt the signal path</span>
+      <h3 data-i18n-html="matrix_title">8×8 routing matrix,<br>38 decoded algorithms.</h3>
+      <p data-i18n="matrix_lead">Switch between the faithful 1U hardware rack facade and the flat modern console view. Add, move, swap, or mute blocks across 12 effect families and inspect every parameter on a single three-column page.</p>
+      <ul class="plain-list">
+        <li data-i18n="matrix_li_1">Hardware and modern facades with native Factory (1–400), User (1–200), and Card (1–800) preset recall</li>
+        <li data-i18n="matrix_li_2">Compact 6-column matrix expanding automatically up to the full 8×8 routing grid with series/parallel wiring</li>
+        <li data-i18n="matrix_li_3">38 algorithms across 12 families (Dynamic, Filters, Formant, Distort, Vocode, Synth, Pitch, Chorus, Delay, Reverb, Pan, EQ) and 1,251 mapped fields</li>
+        <li data-i18n="matrix_li_4">Copy and paste individual effects between presets while preserving destination routing, mute state, and modulation links</li>
+      </ul>
+      <div class="panel-links">
+        <a class="text-link" href="./editor/"><span data-i18n="matrix_link">Open editor</span> <span aria-hidden="true">↗</span></a>
+        <a class="text-link secondary" href="./editor/?manual=1"><span data-i18n="matrix_manual_link">Read signal chain manual</span> <span aria-hidden="true">↗</span></a>
+      </div>
+      <small class="muted" data-i18n="matrix_demo_note">Runs in Chrome, Edge, Brave, and Opera via Web MIDI API, or 100% offline for preset preparation.</small>
+    </div>
+  </div>
+
+  <!-- Panel 2: Modulation Matrix & Alpha / Ext -->
+  <div class="product-panel" id="panel-modulation" role="tabpanel" aria-labelledby="tab-modulation" hidden>
+    <div class="product-media">
+      <div class="window-top">
+        <span class="traffic" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span data-i18n="modulation_window_title">FireworX Studio — Source × Parameter Modulation Matrix</span>
+        <span class="window-note" data-i18n="modulation_window_note">Alpha · Ext 1–8 · Freeform</span>
+      </div>
+      <img src="./site/assets/en-modulation.png" alt="FireworX Studio modulation matrix linking Alpha Mod, Ext 1-8, ADSR, LFO, and Freeform modifiers to effect parameters" data-i18n-src="modulation_img_src" data-i18n-alt="modulation_img_alt" width="1442" height="1018" loading="lazy">
+    </div>
+    <div class="product-description">
+      <span class="eyebrow" data-i18n="modulation_eyebrow">Dynamic movement &amp; external control</span>
+      <h3 data-i18n-html="modulation_title">Every source, every cord,<br>at a single glance.</h3>
+      <p data-i18n="modulation_lead">Bind internal modifiers and external controllers directly on a visual matrix: one row per modulation source, one column per modulatable block parameter, with live MIDI flash feedback.</p>
+      <ul class="plain-list">
+        <li data-i18n="modulation_li_1">Click any cell to create or inspect a modulation cord: Low, Mid, High, Slope, and Glide parameters</li>
+        <li data-i18n="modulation_li_2">Internal modifiers (ADSR 1–2, LFO 1–2, Freeform, Function, Pitch &amp; Envelope detectors) plus Alpha &amp; Ext 1–8</li>
+        <li data-i18n="modulation_li_3">Freeform curve editor: draw 1–32 samples by hand or record up to 10 seconds of live Alpha movement</li>
+        <li data-i18n="modulation_li_4">Dedicated external MIDI controller input with MIDI Learn for Alpha and Ext 1–8 without interrupting SysEx safety</li>
+      </ul>
+      <div class="panel-links">
+        <a class="text-link" href="./editor/"><span data-i18n="modulation_link">Explore Modulation Matrix</span> <span aria-hidden="true">↗</span></a>
+        <a class="text-link secondary" href="./editor/?manual=1"><span data-i18n="modulation_manual_link">Modulation &amp; CTRL guide</span> <span aria-hidden="true">↗</span></a>
+      </div>
+      <small class="muted" data-i18n="modulation_demo_note">Browser MIDI Learn configures your local controller profile; match it to your hardware I/O SETUP → CTRL assignments.</small>
+    </div>
+  </div>
+
+  <!-- Panel 3: Librarian & Seeded Randomizer -->
+  <div class="product-panel" id="panel-librarian" role="tabpanel" aria-labelledby="tab-librarian" hidden>
+    <div class="product-media">
+      <div class="window-top">
+        <span class="traffic" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span data-i18n="librarian_window_title">FireworX Studio — Preset Librarian &amp; Seeded DSP Randomizer</span>
+        <span class="window-note" data-i18n="librarian_window_note">IndexedDB · Byte-Exact .syx</span>
+      </div>
+      <div class="media-stack">
+        <img src="./site/assets/en-library.png" alt="FireworX Studio preset librarian showing Factory, User, Card, and Local banks with SHA-256 verification" data-i18n-src="librarian_lib_src" data-i18n-alt="librarian_lib_alt" width="2360" height="1408" loading="lazy">
+        <img src="./site/assets/en-randomize.png" alt="FireworX Studio Randomize tool showing seeded block and routing variations within a 98% DSP budget" data-i18n-src="librarian_rand_src" data-i18n-alt="librarian_rand_alt" width="1600" height="1338" loading="lazy">
+      </div>
+    </div>
+    <div class="product-description">
+      <span class="eyebrow" data-i18n="librarian_eyebrow">Preserve, classify &amp; generate</span>
+      <h3 data-i18n-html="librarian_title">Progressive bank reads.<br>Reproducible variations.</h3>
+      <p data-i18n="librarian_lead">Acquire Factory, User, and Card banks progressively, organize local favourites and tags with byte-exact SysEx preservation, and generate deterministic seeded variations within an estimated DSP budget.</p>
+      <ul class="plain-list">
+        <li data-i18n="librarian_li_1">Read page, Read bank, and Resume unread locations progressively without losing already-captured presets</li>
+        <li data-i18n="librarian_li_2">Byte-exact preservation of all 2,745 expanded Data20 bytes, including undecoded fields and SHA-256 digests</li>
+        <li data-i18n="librarian_li_3">Guarded STORE mode: backs up the destination slot, verifies source &amp; target, writes, and reads back</li>
+        <li data-i18n="librarian_li_4">Seeded Randomizer (Parameters, Structure, or Blocks + Routing) with block locks and shared 1–108% DSP ceiling</li>
+      </ul>
+      <div class="panel-links">
+        <a class="text-link" href="./editor/"><span data-i18n="librarian_link">Open Librarian &amp; Randomizer</span> <span aria-hidden="true">↗</span></a>
+        <button class="text-link secondary" data-access><span data-i18n="librarian_local_link">Quick start &amp; local setup</span> <span aria-hidden="true">→</span></button>
+      </div>
+      <small class="muted" data-i18n="librarian_demo_note">All presets, banks, and MIDI journals stay locally in your browser (LocalStorage / IndexedDB) until you export .json or .syx files.</small>
+    </div>
+  </div>
+</section>
+
+<section class="features section" id="fonctions">
+  <div class="section-heading reveal">
+    <p class="eyebrow" data-i18n="features_eyebrow">02 / Under the hood</p>
+    <h2 data-i18n-html="features_title">Guarded precision,<br><span>down to the SysEx nibble.</span></h2>
+    <p data-i18n="features_lead">Every edit respects the FireworX OS 2.00+ protocol: dual-read connection verification, short Data21 parameter writes, complete Data20 structural transactions, and full unknown-byte preservation.</p>
+  </div>
+  <div class="feature-list">
+    <article class="feature reveal">
+      <span class="feature-number">01</span>
+      <div>
+        <h3 data-i18n="feat_1_title">Hardware &amp; Modern Facades.</h3>
+        <p data-i18n="feat_1_desc">Switch seamlessly between the 1U rack front panel with live SVG LCD projection and a flat modern layout, across 5 curated color palettes (Porcelain/Cobalt default, Graphite, Slate, Sand, Heritage) and 3 workspace layouts.</p>
+        <span class="feature-tag" data-i18n="feat_1_tag">2 Facades · 5 Themes · 3 Layouts</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect x="8" y="18" width="48" height="28" rx="4" stroke="currentColor" stroke-width="2.5"/>
+        <rect x="14" y="24" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+        <circle cx="42" cy="32" r="5" stroke="currentColor" stroke-width="2"/>
+        <circle cx="51" cy="32" r="3" fill="currentColor"/>
+      </svg>
+    </article>
+    <article class="feature reveal">
+      <span class="feature-number">02</span>
+      <div>
+        <h3 data-i18n="feat_2_title">8×8 Matrix &amp; 38 Algorithms.</h3>
+        <p data-i18n="feat_2_desc">Build series and parallel chains across 12 effect families and 38 algorithms. Enforces hardware instance quotas, valid routing paths, and feedback/Insert protections.</p>
+        <span class="feature-tag" data-i18n="feat_2_tag">38 Algorithms · 12 Families · 1,251 Fields</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect x="10" y="14" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2.5"/>
+        <rect x="38" y="14" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2.5"/>
+        <rect x="24" y="36" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M26 21h12M18 28v15h6M46 28v15h-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </article>
+    <article class="feature reveal">
+      <span class="feature-number">03</span>
+      <div>
+        <h3 data-i18n="feat_3_title">Visual Modulation &amp; Freeform.</h3>
+        <p data-i18n="feat_3_desc">Map Alpha, Ext 1–8, ADSR, LFO, detectors, and 32-point Freeform curves on an interactive grid. Live MIDI input flashes active rows, links, and target controls.</p>
+        <span class="feature-tag" data-i18n="feat_3_tag">Modulation Matrix &amp; MIDI Learn</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M10 44c8-22 14-22 22 0s14 22 22 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="21" cy="28" r="3.5" fill="currentColor"/>
+        <circle cx="43" cy="36" r="3.5" fill="currentColor"/>
+      </svg>
+    </article>
+    <article class="feature reveal">
+      <span class="feature-number">04</span>
+      <div>
+        <h3 data-i18n="feat_4_title">Seeded Randomizer &amp; DSP Ceiling.</h3>
+        <p data-i18n="feat_4_desc">Draw reproducible variations of Parameters, Structure, or Blocks + Routing from your local corpus. Lock blocks to keep, adjust the 1–108% estimated DSP ceiling, and preview before applying.</p>
+        <span class="feature-tag" data-i18n="feat_4_tag">Deterministic Seeds · DSP Estimate</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect x="14" y="14" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="24" cy="24" r="3" fill="currentColor"/>
+        <circle cx="32" cy="32" r="3" fill="currentColor"/>
+        <circle cx="40" cy="40" r="3" fill="currentColor"/>
+        <circle cx="40" cy="24" r="3" fill="currentColor"/>
+        <circle cx="24" cy="40" r="3" fill="currentColor"/>
+      </svg>
+    </article>
+    <article class="feature reveal">
+      <span class="feature-number">05</span>
+      <div>
+        <h3 data-i18n="feat_5_title">Guarded P0 SysEx Transport.</h3>
+        <p data-i18n="feat_5_desc">Requires two identical P0 reads before enabling live writes. Uses short Data21 frames for proven scalar fields and verified 2,745-byte Data20 images with an enforced ~8.9 s settle period for structural edits.</p>
+        <span class="feature-tag" data-i18n="feat_5_tag">Dual-Read P0 · Data20 / Data21 Verification</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 10l18 8v14c0 12-7.5 20.5-18 24-10.5-3.5-18-12-18-24V18l18-8Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M24 32l6 6 11-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </article>
+    <article class="feature reveal">
+      <span class="feature-number">06</span>
+      <div>
+        <h3 data-i18n="feat_6_title">Local Librarian &amp; Offline Manual.</h3>
+        <p data-i18n="feat_6_desc">Store banks, tags, and MIDI journals in browser IndexedDB, export .json/.syx archives, and read the built-in EN/FR illustrated manual with single-file offline HTML export.</p>
+        <span class="feature-tag" data-i18n="feat_6_tag">IndexedDB · .syx / .json · EN/FR Manual</span>
+      </div>
+      <svg class="feature-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M14 12h28l10 10v30H14V12Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M22 12v14h18V12M22 52V36h20v16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>
+    </article>
+  </div>
+</section>
+
+<section class="workflow" id="fonctionnement">
+  <div class="section inner">
+    <div class="section-heading reveal">
+      <p class="eyebrow" data-i18n="wf_eyebrow">03 / Protected architecture</p>
+      <h2 data-i18n="wf_title">Choose your workflow.</h2>
+      <p data-i18n="wf_lead">Synchronized Web MIDI control of the temporary P0 edit buffer, or 100% offline preset preparation, library management, and seeded randomization.</p>
+    </div>
+    <div class="route-toggle" role="group" aria-label="Choose illustrated workflow" data-i18n-aria="wf_toggle_aria">
+      <button data-route="agent" aria-pressed="true" data-i18n="wf_btn_agent">Live Web MIDI · Guarded P0</button>
+      <button data-route="browser" aria-pressed="false" data-i18n="wf_btn_browser">Offline Prep &amp; Variations</button>
+    </div>
+    <div class="route reveal" aria-label="Routing schema" data-i18n-aria="wf_route_aria">
+      <div class="route-node">
+        <span class="route-icon" aria-hidden="true">🎛</span>
+        <strong data-i18n="wf_node_left">FireworX Processor (OS 2.00+)</strong>
+        <small data-i18n="wf_sub_left">MIDI In &amp; Out · Device ID 0–127</small>
+      </div>
+      <div class="route-wire"><span id="route-wire-left">WEB MIDI / SYSEX</span><i></i></div>
+      <div class="route-node main-node">
+        <img src="./site/assets/mark.svg" width="38" height="38" alt="">
+        <strong id="route-owner">FireworX Studio</strong>
+        <small id="route-sub" data-i18n="wf_sub_agent">Guarded Transport &amp; Librarian</small>
+      </div>
+      <div class="route-wire"><span id="route-protocol">DATA21 / DATA20</span><i></i></div>
+      <div class="route-node">
+        <span class="route-icon" aria-hidden="true">≋</span>
+        <strong data-i18n="wf_node_dest">P0 Buffer · User &amp; Card Banks</strong>
+        <small data-i18n="wf_sub_dest">Data21 Scalars · Data20 Structural + Readback</small>
+      </div>
+    </div>
+    <p class="route-explanation" id="route-explanation" data-i18n="wf_exp_agent">FireworX Studio connects via bidirectional Web MIDI (DIN or RTP/mioXL). After two matching P0 buffer reads ("Live · verified"), parameter tweaks use short Data21 writes while structural changes use complete Data20 images with comparison read, readback, and an ~8.9 s settle window.</p>
+    <div class="workflow-notes reveal">
+      <div>
+        <h3 data-i18n="wf_note_1_title">Two-read P0 synchronization</h3>
+        <p data-i18n="wf_note_1_desc">Connecting never overwrites the unit with a stale browser draft: two identical P0 replies (F0 00 20 1F 00 40 45 00 00 F7) are required before live editing unlocks.</p>
+      </div>
+      <div>
+        <h3 data-i18n="wf_note_2_title">Enforced structural settle</h3>
+        <p data-i18n="wf_note_2_desc">Complete 2,745-byte P0 structural writes enforce an ~8.9 s quiet window without competing GET, CC, or Clock messages, coalescing gestures safely.</p>
+      </div>
+      <div>
+        <h3 data-i18n="wf_note_3_title">Zero backend, 100% local</h3>
+        <p data-i18n="wf_note_3_desc">All presets, libraries, and MIDI journals remain in your browser profile. No cloud account, telemetry, or external server is ever contacted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="roadmap section" id="disponibilite">
+  <div class="section-heading reveal">
+    <p class="eyebrow" data-i18n="rm_eyebrow">04 / Transparency &amp; scope</p>
+    <h2 data-i18n-html="rm_title">What’s here now.<br><span>Known alpha boundaries.</span></h2>
+    <p data-i18n="rm_lead">Delivered capabilities in v0.1.0-alpha.1 and documented hardware/protocol boundaries to keep in mind.</p>
+  </div>
+  <div class="roadmap-columns">
+    <div class="reveal">
+      <span class="badge-available" data-i18n="rm_badge_ready">Available in v0.1.0-alpha.1</span>
+      <ul class="roadmap-list">
+        <li data-i18n="rm_ready_1">Hardware 1U rack and Modern facades with 5 color themes and 3 workspace layouts (Studio, Console, Focus)</li>
+        <li data-i18n="rm_ready_2">Compact-to-8×8 signal matrix, 38 algorithms across 12 families, and 3-column block settings inspector</li>
+        <li data-i18n="rm_ready_3">Interactive modulation matrix, link editor (Low/Mid/High/Slope/Glide), Freeform curve editor &amp; Alpha/Ext MIDI Learn</li>
+        <li data-i18n="rm_ready_4">Local IndexedDB librarian with progressive bank reads (Read page, Read bank, Resume unread) and effect copy/paste</li>
+        <li data-i18n="rm_ready_5">Seeded Randomizer (Parameters, Structure, Blocks + routing) with block locks and shared 1–108% DSP budget</li>
+        <li data-i18n="rm_ready_6">Guarded P0 transport with dual-read connect, Data21/Data20 verification, guarded User/Card STORE &amp; live MIDI monitor</li>
+        <li data-i18n="rm_ready_7">Byte-exact preservation of undecoded SysEx bytes across .syx and .json imports/exports</li>
+        <li data-i18n="rm_ready_8">Bilingual EN/FR interface and built-in illustrated manual with self-contained offline HTML export</li>
+      </ul>
+      <p class="roadmap-note" data-i18n-html="rm_ready_note">Seven offline synthetic verification suites run automatically before every build. <a href="./editor/">Open editor</a></p>
+    </div>
+    <div class="reveal">
+      <span class="badge-planned" data-i18n="rm_badge_planned">Documented alpha boundaries &amp; pending qualification</span>
+      <ul class="roadmap-list">
+        <li data-i18n="rm_plan_1">Protocol target is FireworX OS 2.00+; not a certification of every firmware version, MIDI interface, or memory card.</li>
+        <li data-i18n="rm_plan_2">Controls external hardware via MIDI/SysEx only; does not process audio or receive hardware level/gain-reduction/CPU telemetry.</li>
+        <li data-i18n="rm_plan_3">User/Card STORE backs up the destination slot and verifies readback; complete hardware qualification and retention across power-off remain pending.</li>
+        <li data-i18n="rm_plan_4">The DSP percentage (1–108%) is an additive software estimate, not a hardware DSP counter or overload guarantee.</li>
+        <li data-i18n="rm_plan_5">Global I/O SETUP → CTRL read/write and global BPM readback are not established; packed User dumps require expanded per-preset reads for editing.</li>
+      </ul>
+      <div class="roadmap-hw-box">
+        <strong data-i18n="rm_hw_title">Built-in Illustrated User Manual (EN / FR)</strong>
+        <p data-i18n="rm_hw_desc">Read the complete illustrated guide covering bidirectional MIDI setup, P0 vs STORE workflows, modulation links, and troubleshooting directly in the editor.</p>
+        <a class="text-link" href="./editor/?manual=1"><span data-i18n="rm_hw_btn">Open Illustrated Manual in Editor</span> <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="roadmap-note" data-i18n="rm_plan_note">Independent community alpha software. Always keep exported .syx / .json backups of your presets.</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq section">
+  <div class="faq-title reveal">
+    <p class="eyebrow" data-i18n="faq_eyebrow">Key questions</p>
+    <h2 data-i18n="faq_title">Before you start.</h2>
+  </div>
+  <div class="faq-list">
+    <details>
+      <summary><span data-i18n="faq_q1">Does FireworX Studio risk overwriting my hardware presets when I connect?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a1">No. Connecting reads P0 twice and waits for two identical responses ("Live · verified") before enabling live edits. It never automatically transmits an old draft from browser storage upon connection, and temporary P0 editing is strictly separate from persistent User/Card STORE.</p>
+    </details>
+    <details>
+      <summary><span data-i18n="faq_q2">How do I connect my FireworX via Web MIDI?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a2">Connect both MIDI directions (Computer Out → FireworX In AND FireworX Out → Computer In). Open the editor in a Chromium browser (Chrome, Edge, Brave, Opera), allow MIDI/SysEx access, and open MIDI / Buffer if you need to pick your input/output ports or SysEx Device ID explicitly.</p>
+    </details>
+    <details>
+      <summary><span data-i18n="faq_q3">Can I use FireworX Studio without a FireworX plugged in?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a3">Yes. Without MIDI permission or hardware, you can build signal chains, edit all 38 algorithms and modulation links, import/export .syx and .json files, organize local banks, and generate seeded variations.</p>
+    </details>
+    <details>
+      <summary><span data-i18n="faq_q4">Why is there an ~8.9 second pause after adding, moving, or deleting a block?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a4">Structural edits (changing the matrix, adding/removing blocks, or changing unverified routing fields) require sending a complete 2,745-byte Data20 P0 image. The FireworX hardware needs at least 8 seconds after wire transmission to settle before accepting new GET, CC, or Clock messages.</p>
+    </details>
+    <details>
+      <summary><span data-i18n="faq_q5">How does the Seeded Randomizer protect my signal chain?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a5">You can lock any block you want to preserve, choose between Parameters, Structure, or Blocks + Routing variations, and set a deterministic seed. Variations respect instance quotas, valid routing rules, feedback/Insert protections, and your configured DSP budget ceiling before you preview or apply them.</p>
+    </details>
+    <details>
+      <summary><span data-i18n="faq_q6">Where are my presets, libraries, and MIDI logs stored?</span><span aria-hidden="true">+</span></summary>
+      <p data-i18n="faq_a6">Everything stays locally in your browser profile (LocalStorage and IndexedDB) scoped to the site origin. Nothing is uploaded to any server. Use the disk icon and Library export tools to keep portable .json and .syx backups on your computer.</p>
+    </details>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="section">
+    <p class="eyebrow" data-i18n="closing_eyebrow">Ready to explore</p>
+    <h2 data-i18n-html="closing_title">Shape your signal matrix.<br><span>Explore new sonic architectures.</span></h2>
+    <div class="closing-actions">
+      <a class="button primary" href="./editor/"><span data-i18n="closing_cta">Open editor</span> <span aria-hidden="true">↗</span></a>
+      <a class="button secondary" href="./editor/?manual=1"><span data-i18n="closing_manual">Open Illustrated Manual</span> <span aria-hidden="true">↗</span></a>
+    </div>
+    <p data-i18n="closing_note">Independent open-source community project · Built on MIDI Studio</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="brand">
+        <img src="./site/assets/mark.svg" alt="" width="28" height="28">
+        <span>FireworX <small>STUDIO</small></span>
+      </div>
+      <p class="footer-tagline" data-i18n="footer_tagline">Browser Editor, Signal Matrix, Modulation Studio &amp; Preset Librarian for the FireworX multi-effects processor.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <strong data-i18n="footer_col_app">Application</strong>
+        <a href="./editor/" data-i18n="footer_link_editor">Launch FireworX Editor</a>
+        <a href="./editor/?manual=1" data-i18n="footer_link_manual">Illustrated User Manual</a>
+        <button type="button" class="footer-btn" data-access data-i18n="footer_link_quickstart">Quick Start Guide</button>
+      </div>
+      <div>
+        <strong data-i18n="footer_col_docs">Workspace &amp; Sections</strong>
+        <a href="#duo" data-i18n="footer_link_workspaces">Facade, Matrix &amp; Librarian</a>
+        <a href="#fonctions" data-i18n="footer_link_features">38 Algorithms &amp; Modulations</a>
+        <a href="#fonctionnement" data-i18n="footer_link_routing">Guarded P0 Transport</a>
+        <a href="#disponibilite" data-i18n="footer_link_roadmap">Alpha Scope &amp; Limitations</a>
+      </div>
+      <div>
+        <strong data-i18n="footer_col_project">Project &amp; Privacy</strong>
+        <a href="https://github.com/TheLazyGeekGuy/fireworx-studio" target="_blank" rel="noopener" data-i18n="footer_link_github">GitHub Repository</a>
+        <a href="https://github.com/TheLazyGeekGuy/fireworx-studio/blob/main/README.md" target="_blank" rel="noopener" data-i18n="footer_link_readme_en">Documentation (EN)</a>
+        <a href="https://github.com/TheLazyGeekGuy/fireworx-studio/blob/main/README.fr.md" target="_blank" rel="noopener" data-i18n="footer_link_readme_fr">Documentation (FR)</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p data-i18n-html="footer_legal">&copy; 2026 MIDI Studio Project. Independent community tool built for musicians and sound designers; not affiliated with the maker of the hardware unit.</p>
+    <a href="#top" class="back-to-top" aria-label="Back to top" data-i18n="footer_top">↑ Top</a>
+  </div>
+</footer>
+
+<!-- Quick Start & Access Modal Dialog -->
+<div class="modal" id="access-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <img src="./site/assets/mark.svg" alt="" width="28" height="28">
+        <h3 id="modal-title" data-i18n="modal_title">Get Started with FireworX Studio</h3>
+      </div>
+      <button class="modal-close" data-close aria-label="Close dialog" data-i18n-aria="modal_close_aria">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-intro" data-i18n="modal_intro">FireworX Studio works directly in your browser with zero installation, both online and offline, or from a local Vite development server.</p>
+
+      <div class="modal-section">
+        <div class="modal-sec-icon">🌐</div>
+        <div>
+          <strong data-i18n="modal_sec1_title">1. Instant Browser Access (Recommended)</strong>
+          <p data-i18n="modal_sec1_desc">Open the editor in Chrome, Edge, Brave, or Opera. Connect both MIDI In and MIDI Out to your FireworX (OS 2.00+), allow Web MIDI / SysEx access, and wait for "Live · verified".</p>
+          <a class="button primary modal-cta" href="./editor/"><span data-i18n="modal_sec1_btn">Open editor</span> <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-sec-icon">⚡</div>
+        <div>
+          <strong data-i18n="modal_sec2_title">2. Run Locally via Vite Dev Server</strong>
+          <p data-i18n="modal_sec2_desc">Clone the repository and run the local development server on your machine:</p>
+          <pre class="code-box"><code>git clone https://github.com/TheLazyGeekGuy/fireworx-studio.git
+cd fireworx-studio
+npm ci
+npm run dev</code></pre>
+          <small class="muted" data-i18n="modal_sec2_note">Then open http://127.0.0.1:5173/editor/ in a Web MIDI compatible browser.</small>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-sec-icon">📖</div>
+        <div>
+          <strong data-i18n="modal_sec3_title">3. Read the Illustrated User Manual</strong>
+          <p data-i18n="modal_sec3_desc">Consult the bilingual EN/FR manual inside the editor (with offline single-file HTML export) for detailed P0, STORE, Modulation, and Randomize workflows:</p>
+          <a class="button secondary modal-cta" href="./editor/?manual=1"><span data-i18n="modal_sec3_btn">Open Illustrated Manual</span> <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./site/site.js"></script>
+</body>
 </html>
